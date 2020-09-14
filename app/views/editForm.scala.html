@@ -1,0 +1,27 @@
+@(id: Long, todoForm: Form[String])(implicit request: MessagesRequestHeader)
+
+<html>
+<head>
+    <title>Todo</title>
+</head>
+<body>
+
+<h1>Todo更新</h1>
+
+@helper.form(action = routes.TodoController.todoUpdate(id)) {
+@helper.CSRF.formField
+
+    <fieldset>
+        @helper.inputText(todoForm("name"), '_label -> "名前")
+    </fieldset>
+
+    <input type="submit" value="更新">
+}
+
+@helper.form(action = routes.TodoController.todoDelete(id)) {
+@helper.CSRF.formField
+    <input type="submit" value="削除" class="btn danger">
+}
+
+</body>
+</html>

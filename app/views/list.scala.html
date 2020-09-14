@@ -17,12 +17,12 @@
         <tbody>
         @items.map { todo =>
         <tr>
-            <td>@todo.name</td>
+            <td><a href="@controllers.routes.TodoController.todoEdit(todo.id.get)">@todo.name</a></td>
         </tr>
         }
         </tbody>
     </table>
-    <a href="/todo/new">Add</a>
+    <a href="@controllers.routes.TodoController.todoNew()">Add</a>
 </section>
 
 </body>
