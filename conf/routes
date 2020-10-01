@@ -10,14 +10,14 @@ GET     /                           controllers.HomeController.index
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
 
 # Read
-GET     /todo/helloworld                       controllers.TodoController.helloworld()
+GET     /todo/helloworld            controllers.TodoController.helloworld()
 GET     /todo                       controllers.TodoController.list()
 GET     /todo/new                   controllers.TodoController.todoNew()
-GET     /todo/edit/:todoId                  controllers.TodoController.todoEdit(todoId:Long)
+GET     /todo/edit/:todoId          controllers.TodoController.todoEdit(todoId:Long)
 
 # Create Update
 POST    /todo                       controllers.TodoController.todoAdd()
-POST   /todo/:todoId                       controllers.TodoController.todoUpdate(todoId:Long)
+POST    /todo/:todoId                controllers.TodoController.todoUpdate(todoId:Long)
 
 # Delete
-POST   /todo/:todoId/delete                controllers.TodoController.todoDelete(todoId:Long)
+POST    /todo/:todoId/delete         controllers.TodoController.todoDelete(todoId:Long)

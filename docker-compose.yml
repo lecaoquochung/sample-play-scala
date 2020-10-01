@@ -1,0 +1,14 @@
+version: '3.3'
+
+services:
+  scala:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /home/qa
+    volumes:
+      - ".:/home/qa"
+    entrypoint: ["sh", "-c", "sleep infinity"]
+    environment:
+      - TZ=Asia/Tokyo
+      - LC_ALL=en_US.UTF-8
