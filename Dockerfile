@@ -2,7 +2,7 @@ FROM alpine:3.12
 
 RUN apk update && apk upgrade
 
-RUN apk add --no-cache java-cacerts openjdk8 ca-certificates git openssh curl python3 screen bash zip tar nodejs npm libuv yarn
+RUN apk add --no-cache java-cacerts openjdk8 ca-certificates git openssh curl python3 screen bash zip tar nodejs npm libuv yarn postgresql-client
 
 ENV JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk
 ENV PATH="$JAVA_HOME/bin:${PATH}"
@@ -12,9 +12,10 @@ RUN java -version; \
     javac -version; \
     node -v; \
     npm -v; \
-    yarn -v
+    yarn -v; \
+    psql -V;
 
-WORKDIR /root/code
+WORKDIR /root/qa
 
 # Install sbt
 RUN curl -L -o /root/sbt.zip https://github.com/sbt/sbt/releases/download/v1.2.8/sbt-1.2.8.zip \
@@ -24,8 +25,7 @@ RUN curl -L -o /root/sbt.zip https://github.com/sbt/sbt/releases/download/v1.2.8
 # Put tools like aws and sbt in the PATH
 ENV PATH /root/.local/bin:/root/sbt/bin:/root/bin:${PATH}
 
-# sbt needs to download the entire Internet before continuing
-# so we'll let it do that here
+# sbt build
 RUN sbt sbtVersion
 
 # The scala server will run on port 9000 by default
