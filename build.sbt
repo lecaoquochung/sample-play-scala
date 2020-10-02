@@ -21,3 +21,8 @@ libraryDependencies += "com.h2database" % "h2" % "1.4.196"
 
 // Adds additional packages into conf/routes
 // play.sbt.routes.RoutesKeys.routesImport += "com.example.binders._"
+
+// resolvers is the list of URLs from where the dependencies can be picked up
+//scalacOptions is the list of parameters passed to the Scala compiler.
+resolvers += Resolver.sonatypeRepo("snapshots")
+scalacOptions ++= Seq("-feature", "-language:reflectiveCalls")
