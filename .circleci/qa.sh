@@ -20,11 +20,11 @@ curl --retry 60 \
      http://api.test
 
 # API server health check
-curl --retry 60 \
-     --retry-connrefused \
-     --retry-max-time 60 \
-     --retry-delay 1 \
-     http://api.test/api/health
+# curl --retry 60 \
+     # --retry-connrefused \
+     # --retry-max-time 60 \
+     # --retry-delay 1 \
+     # http://api.test/api/health
 
 # Run tests
 # cd /home/qa/; ./help.sh cli test cucumber local tag "@api"
