@@ -1,0 +1,131 @@
+base_system: &qa_system
+  docker:
+    - image: lecaoquochung/scala:dev
+  working_directory: /home/qa
+
+version: 2
+
+jobs:
+  build:
+    <<: *qa_system
+    steps:
+      - checkout
+      - add_ssh_keys: 
+          fingerprints: 
+      - restore_cache:
+          key: qa-build-{{ checksum "package.json" }}
+      - run:
+          name: Validate dockerfile dependencies
+          command: |
+            npm --version; # npm install # TODO type safe error in node_modules
+            yarn --version;
+            psql -V;
+      - run: 
+          name: yarn dependencies
+          command: |
+            yarn install
+      - run: 
+          name: Generate the Scala application bundle
+          command: |
+            sbt clean dist
+      - persist_to_workspace:
+          root: .
+          paths:
+              - ./
+      - save_cache:
+          paths:
+              - /home/qa/node_modules
+              - /home/.ivy2
+          key: qa-build-{{ checksum "package.json" }}
+      - store_artifacts:
+          path: /home/qa//target/universal/sample-play-scala-1.0-SNAPSHOT.zip
+  
+  test:
+    <<: *qa_system
+    docker:
+      - image: lecaoquochung/scala:dev
+      - image: postgres:9.6.11
+        environment:
+          - POSTGRES_DB=qa
+          - POSTGRES_USER=qa
+          - POSTGRES_PASSWORD=qaPassword
+          - POSTGRES_TEST_DB=test
+          - POSTGRES_TEST_USER=test
+          - POSTGRES_TEST_PASSWORD=testPassword
+        volumes:
+          - $PWD/docker/postgres/initdb:/docker-entrypoint-initdb.d
+      - image: redis:3.2.10
+    
+    environment:
+      - DATABASE_URL=postgres://qa:qaPassword@localhost:5432/qa
+      - TEST_DATABASE_URL=postgres://test:testPassword@localhost:5432/test
+    
+    steps:
+      - attach_workspace:
+          at: .
+      - restore_cache:
+          key: qa-build-{{ checksum "package.json" }}
+      - run:
+          name: Validate dockerfile dependencies
+          command: |
+            npm --version;
+            yarn --version;
+            psql -V;
+      - run:
+          name: Validate dockerfile dependencies
+          command: |
+            npm --version; # npm install # TODO type safe error in node_modules
+            yarn --version;
+            psql -V;
+      
+      # - run: sbt "runMain" # TODO research # - run: sbt "runMain models.enums.EnumsGen" # 
+      - run: sbt test
+
+      - run:
+          name: Validate QA test data
+          command: |
+            pwd;
+            export PGPASSWORD='qaPassword'; psql -h localhost -p 5432 -U qa qa < sql/qa.sql
+            psql -h localhost -p 5432 -U qa -c "CREATE USER test WITH PASSWORD 'testPassword'";
+            psql -h localhost -p 5432 -U qa -c "CREATE DATABASE test;"
+            psql -h localhost -p 5432 -U qa -c "GRANT ALL PRIVILEGES ON DATABASE test to test;"
+            export PGPASSWORD='testPassword'; psql -h localhost -p 5432 -U test test < sql/test.sql
+            echo "127.0.0.1 api.test" >> /etc/hosts
+
+      - run: 
+          name: Start Server
+          command: |
+            ./.circleci/qa.sh
+          when: always
+
+      - run:
+          name: Test Frontend
+          command: |
+            yarn webpack --mode=development
+          when: always
+
+      - run:
+          name: Test artifacts
+          command: |
+            export PGPASSWORD='testPassword'; pg_dump -h localhost -p 5432 -U test -d test -f sql/test.sql
+            export PGPASSWORD='qaPassword'; pg_dump -h localhost -p 5432 -U qa -d qa -f sql/qa.sql
+            mkdir -p /home/qa/artifact
+            mkdir -p /home/qa/test-results/cucumber
+            # cp *.json /home/qa/test-results/
+            # cp /home/qa/sql/*.sql /home/qa/artifact/
+      
+      - store_test_results:
+          path: test-results
+
+      - store_artifacts:
+          path: artifact
+
+workflows:
+  version: 2
+
+  qa_build_test:
+    jobs:
+      - build
+      - test:
+          requires:
+              - build

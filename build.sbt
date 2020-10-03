@@ -1,5 +1,5 @@
 name := """sample-play-scala"""
-organization := "com.example"
+organization := "com.lehungio"
 
 version := "1.0-SNAPSHOT"
 
