@@ -1,10 +1,13 @@
 {
   "name": "sample-play-scala",
-  "version": "1.0.1",
+  "version": "1.0.1-build-1",
   "license": "MIT",
   "description": "sample play scala",
   "dependencies": {
+    "@cucumber/cucumber": "^7.0.0-rc.0",
     "cucumber": "^7.0.0-rc.0",
+    "moment": "^2.29.1",
+    "path": "^0.12.7",
     "puppeteer": "^5.3.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
