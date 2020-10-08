@@ -23,5 +23,8 @@
   "scripts": {
     "test": "jest -i",
     "cucumber": "cucumber-js"
-  }
+  },
+  "main": "index.js",
+  "repository": "git@github.com:lecaoquochung/sample-play-scala.git",
+  "author": "lecaoquochung <lecaoquochung@gmail.com>"
 }
