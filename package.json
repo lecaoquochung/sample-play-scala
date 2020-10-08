@@ -1,6 +1,6 @@
 {
   "name": "sample-play-scala",
-  "version": "1.0.1-build-puppeteer-2",
+  "version": "1.0.1-build-puppeteer-3",
   "license": "MIT",
   "description": "sample play scala",
   "dependencies": {
