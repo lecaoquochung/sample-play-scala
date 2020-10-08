@@ -99,20 +99,26 @@ jobs:
           when: always
 
       - run:
-          name: Test Frontend
+          name: Test Frontend Reactjs
           command: |
             yarn webpack --mode=development
           when: always
+
+      - run:
+          name: Test Cucumber
+          command: |
+            yarn cucumber -f json:report/report.json --publish
 
       - run:
           name: Test artifacts
           command: |
             export PGPASSWORD='testPassword'; pg_dump -h localhost -p 5432 -U test -d test -f sql/test.sql
             export PGPASSWORD='qaPassword'; pg_dump -h localhost -p 5432 -U qa -d qa -f sql/qa.sql
-            mkdir -p /home/qa/artifact
             mkdir -p /home/qa/test-results/cucumber
             # cp *.json /home/qa/test-results/
-            # cp /home/qa/sql/*.sql /home/qa/artifact/
+            mkdir -p /home/qa/artifact
+            cp /home/qa/sql/*.sql /home/qa/artifact/
+            cp /home/report/ /home/qa/artifact/
       
       - store_test_results:
           path: test-results
