@@ -76,4 +76,5 @@ RUN set -x \
     udev \
     ttf-freefont \
     chromium \
-    && npm install puppeteer@5.3.1
+    && npm install puppeteer@5.3.1 \
+    && PUPPETEER_PRODUCT=firefox npm install
