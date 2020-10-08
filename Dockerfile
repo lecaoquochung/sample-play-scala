@@ -64,3 +64,16 @@ RUN curl -L -o /root/bin/jq https://github.com/stedolan/jq/releases/download/jq-
 RUN curl -o /root/terraform.zip https://releases.hashicorp.com/terraform/0.10.3/terraform_0.10.3_linux_amd64.zip \
 	&& unzip /root/terraform.zip -d /usr/bin/ \
 	&& rm /root/terraform.zip
+
+# Install Puppeteer
+ENV CHROME_BIN="/usr/bin/chromium-browser" \
+    PUPPETEER_SKIP_CHROMIUM_DOWNLOAD="true"
+
+RUN set -x \
+    && apk update \
+    && apk upgrade \
+    && apk add --no-cache \
+    udev \
+    ttf-freefont \
+    chromium \
+    && npm install puppeteer@5.3.1
