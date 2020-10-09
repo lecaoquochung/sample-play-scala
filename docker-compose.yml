@@ -2,6 +2,7 @@ version: '3.3'
 
 services:
   scala:
+    container_name: scala-build
     build:
       context: .
       dockerfile: Dockerfile

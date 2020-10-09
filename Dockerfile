@@ -22,18 +22,18 @@ RUN java -version; \
     yarn -v; \
     psql -V;
 
-WORKDIR /root/qa
+WORKDIR /home/qa
 
-# Install sbt
-RUN curl -L -o /root/sbt.zip https://github.com/sbt/sbt/releases/download/v1.2.8/sbt-1.2.8.zip \
-	&& unzip /root/sbt.zip -d /root \
-	&& rm /root/sbt.zip
-
-# Put tools like aws and sbt in the PATH
+# # Install sbt
+# RUN curl -L -o /root/sbt.zip https://github.com/sbt/sbt/releases/download/v1.2.8/sbt-1.2.8.zip \
+# 	&& unzip /root/sbt.zip -d /root \
+# 	&& rm /root/sbt.zip
+#
+# # Put tools like aws and sbt in the PATH
 ENV PATH /root/.local/bin:/root/sbt/bin:/root/bin:${PATH}
-
-# sbt build
-RUN sbt sbtVersion
+#
+# # sbt build
+# RUN sbt sbtVersion
 
 # The scala server will run on port 9000 by default
 EXPOSE 9000
@@ -66,15 +66,58 @@ RUN curl -o /root/terraform.zip https://releases.hashicorp.com/terraform/0.10.3/
 	&& rm /root/terraform.zip
 
 # Install Puppeteer
-ENV CHROME_BIN="/usr/bin/chromium-browser" \
-    PUPPETEER_SKIP_CHROMIUM_DOWNLOAD="true"
+RUN apk add --no-cache \
+      chromium \
+      nss \
+      freetype \
+      freetype-dev \
+      harfbuzz \
+      ttf-freefont
 
-RUN set -x \
-    && apk update \
-    && apk upgrade \
-    && apk add --no-cache \
-    udev \
-    ttf-freefont \
-    chromium \
-    && npm install puppeteer@5.3.1 \
-    && PUPPETEER_PRODUCT=firefox npm install
+# ENV CHROME_BIN="/usr/bin/chromium-browser" \
+#     PUPPETEER_SKIP_CHROMIUM_DOWNLOAD="true"
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+
+# RUN set -x \
+#     && apk update \
+#     && apk upgrade \
+#     && apk add --no-cache \
+#     udev \
+#     ttf-freefont \
+#     chromium \
+#     && npm install puppeteer@5.3.1 \
+#     && PUPPETEER_PRODUCT=firefox npm install
+
+# Init yarn dependencies
+COPY package.json /home/qa
+RUN yarn install
+RUN yarn add puppeteer
+
+# Add user so we don't need --no-sandbox.
+RUN addgroup -S qa && adduser -S -g audio,video qa \
+    && mkdir -p /home/qa/Downloads /app \
+    && chown -R qa:qa /home/qa \
+    && chown -R qa:qa /app
+
+# Run everything after as non-privileged user.
+# RUN adduser qa sudo
+# RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+RUN adduser qa wheel
+RUN sed -e 's;^# \(%wheel.*NOPASSWD.*\);\1;g' -i /etc/sudoers
+USER qa
+
+# Install sbt
+RUN curl -L -o /home/qa/sbt.zip https://github.com/sbt/sbt/releases/download/v1.2.8/sbt-1.2.8.zip \
+	&& unzip /home/qa/sbt.zip -d /home/qa \
+	&& rm /home/qa/sbt.zip
+
+# Put tools like aws and sbt in the PATH
+ENV PATH /home/qa/.local/bin:/home/qa/sbt/bin:/home/qa/bin:${PATH}
+
+# sbt build
+RUN sbt sbtVersion
+RUN pwd;ls
+RUN yarn --version
+RUN cat /home/qa/package.json
+RUN sudo aws --version
