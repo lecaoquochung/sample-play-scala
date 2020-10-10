@@ -9,7 +9,15 @@ FROM alpine:3.12
 
 RUN apk update && apk upgrade
 
-RUN apk add --no-cache java-cacerts openjdk8 ca-certificates git openssh curl python3 screen bash zip tar nodejs npm libuv yarn postgresql-client sudo
+RUN apk add --no-cache \
+    java-cacerts openjdk8 ca-certificates \
+    git openssh curl \
+    python3 screen bash \
+    zip tar \
+    nodejs npm \
+    libuv yarn \
+    postgresql-client sudo \
+    iputils
 
 ENV JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk
 ENV PATH="$JAVA_HOME/bin:${PATH}"
