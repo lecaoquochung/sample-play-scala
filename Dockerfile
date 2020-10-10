@@ -129,4 +129,4 @@ RUN pwd;ls
 RUN yarn --version
 RUN cat /home/qa/package.json
 RUN sudo aws --version
-RUN suod chmod 4755 /bin/ping
+RUN sudo chmod 4755 /bin/ping
