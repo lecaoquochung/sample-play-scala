@@ -30,4 +30,4 @@ curl --retry 60 \
 # cd /home/qa/; ./help.sh cli test cucumber local tag "@api"
 
 # Kill the background server
-screen -S api -X quit
+#screen -S api -X quit

@@ -1,7 +1,7 @@
 base_system: &qa_system
   docker:
     - image: lecaoquochung/scala:dev
-  working_directory: /home/qa/src
+  working_directory: /home/qa/code
 
 version: 2
 
@@ -35,6 +35,7 @@ jobs:
       - save_cache:
           paths:
               - /home/qa/node_modules
+              - /home/qa/code/node_modules
               - /home/.ivy2
           key: qa-build-{{ checksum "package.json" }}
       - store_artifacts:
@@ -90,11 +91,12 @@ jobs:
             psql -h localhost -p 5432 -U qa -c "CREATE DATABASE test;"
             psql -h localhost -p 5432 -U qa -c "GRANT ALL PRIVILEGES ON DATABASE test to test;"
             export PGPASSWORD='testPassword'; psql -h localhost -p 5432 -U test test < sql/test.sql
-            echo "127.0.0.1 api.test" | sudo tee -a /etc/hosts;
+            echo "127.0.0.1 qa.api.test api.test" | sudo tee -a /etc/hosts;
 
       - run: 
           name: Start Server
           command: |
+            sudo ping -c 4 api.test
             ./.circleci/qa.sh
           when: always
 
