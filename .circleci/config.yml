@@ -1,7 +1,7 @@
 base_system: &qa_system
   docker:
     - image: lecaoquochung/scala:dev
-  working_directory: /home/qa
+  working_directory: /home/qa/src
 
 version: 2
 
@@ -38,7 +38,7 @@ jobs:
               - /home/.ivy2
           key: qa-build-{{ checksum "package.json" }}
       - store_artifacts:
-          path: /home/qa//target/universal/sample-play-scala-1.0-SNAPSHOT.zip
+          path: /home/qa/target/universal/sample-play-scala-1.0-SNAPSHOT.zip
   
   test:
     <<: *qa_system
