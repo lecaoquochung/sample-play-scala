@@ -30,7 +30,7 @@ RUN java -version; \
     yarn -v; \
     psql -V;
 
-WORKDIR /home/qa
+WORKDIR /root/qa
 
 # # Install sbt
 # RUN curl -L -o /root/sbt.zip https://github.com/sbt/sbt/releases/download/v1.2.8/sbt-1.2.8.zip \
