@@ -127,12 +127,13 @@ RUN curl -L -o /home/qa/sbt.zip https://github.com/sbt/sbt/releases/download/v1.
 
 # Put tools like aws and sbt in the PATH
 ENV PATH /home/qa/.local/bin:/home/qa/sbt/bin:/home/qa/bin:${PATH}
+RUN sudo ln -s /home/qa/sbt/bin/sbt /usr/local/bin/sbt
 
 # sbt build
 RUN env
 RUN pwd
 RUN sbt sbtVersion
-RUN pwd;ls
+RUN pwd;ls -all 
 RUN yarn --version
 RUN cat /home/qa/package.json
 RUN sudo aws --version
