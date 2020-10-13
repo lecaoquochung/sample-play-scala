@@ -33,10 +33,10 @@ RUN java -version; \
 WORKDIR /root/qa
 
 # # Install sbt
-# RUN curl -L -o /root/sbt.zip https://github.com/sbt/sbt/releases/download/v1.2.8/sbt-1.2.8.zip \
-# 	&& unzip /root/sbt.zip -d /root \
-# 	&& rm /root/sbt.zip
-#
+RUN curl -L -o /root/sbt.zip https://github.com/sbt/sbt/releases/download/v1.2.8/sbt-1.2.8.zip \
+ 	&& unzip /root/sbt.zip -d /root \
+ 	&& rm /root/sbt.zip
+
 # # Put tools like aws and sbt in the PATH
 ENV PATH /root/.local/bin:/root/sbt/bin:/root/bin:${PATH}
 #
@@ -98,6 +98,7 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 #     && PUPPETEER_PRODUCT=firefox npm install
 
 # Init yarn dependencies
+RUN mkdir -p /home/qa
 COPY package.json /home/qa
 RUN yarn install
 RUN yarn add puppeteer
@@ -116,12 +117,12 @@ RUN sed -e 's;^# \(%wheel.*NOPASSWD.*\);\1;g' -i /etc/sudoers
 USER qa
 
 # Install sbt
-RUN curl -L -o /home/qa/sbt.zip https://github.com/sbt/sbt/releases/download/v1.2.8/sbt-1.2.8.zip \
-	&& unzip /home/qa/sbt.zip -d /home/qa \
-	&& rm /home/qa/sbt.zip
+#RUN curl -L -o /home/qa/sbt.zip https://github.com/sbt/sbt/releases/download/v1.2.8/sbt-1.2.8.zip \
+#	&& unzip /home/qa/sbt.zip -d /home/qa \
+#	&& rm /home/qa/sbt.zip
 
 # Put tools like aws and sbt in the PATH
-ENV PATH /home/qa/.local/bin:/home/qa/sbt/bin:/home/qa/bin:${PATH}
+#ENV PATH /home/qa/.local/bin:/home/qa/sbt/bin:/home/qa/bin:${PATH}
 
 # sbt build
 RUN sbt sbtVersion
