@@ -140,14 +140,14 @@ jobs:
       - run: 
           name: Generate the Scala application bundle
           command: |
-            sbt clean dist
+            sudo sbt clean dist
       - run:
           name: Validate dockerfile dependencies
           command: |
             npm --version; # npm install # TODO type safe error in node_modules
             yarn --version;
             psql -V;
-      - run: sbt test
+      - run: sudo sbt test
       - run:
           name: Validate QA test data
           command: |
@@ -163,6 +163,7 @@ workflows:
   qa:
     jobs:
       - build
+      - build_and_test
       - test:
           requires:
               - build

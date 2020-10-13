@@ -7,7 +7,7 @@ yarn install
 # Start the scala server in the background
 # screen -d -m -S api /root/sbt/bin/sbt -Dconfig.file=conf/application.conf -Dplay.evolutions.db.default.autoApply=true "run 80"
 # curl --retry 60 --retry-connrefused --retry-max-time 60 --retry-delay 1 http://127.0.0.1
-screen -d -m -S api sbt \
+screen -d -m -S api sudo sbt \
            -Dconfig.file=conf/application.conf \
            -Dplay.evolutions.db.default.autoApply=true \
            "run 80"
