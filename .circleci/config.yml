@@ -71,7 +71,7 @@ jobs:
             yarn --version;
             psql -V;
       # - run: sbt "runMain" # TODO research # - run: sbt "runMain models.enums.EnumsGen" # 
-      - run: sbt test
+      - run: sudo sbt test
       - run:
           name: Validate QA test data
           command: |
