@@ -27,7 +27,7 @@ jobs:
       - run: 
           name: Generate the Scala application bundle
           command: |
-            sbt clean dist
+            sudo sbt clean dist
       - persist_to_workspace:
           root: .
           paths:
@@ -56,11 +56,9 @@ jobs:
         volumes:
           - $PWD/docker/postgres/initdb:/docker-entrypoint-initdb.d
       - image: redis:3.2.10
-    
     environment:
       - DATABASE_URL=postgres://qa:qaPassword@localhost:5432/qa
       - TEST_DATABASE_URL=postgres://test:testPassword@localhost:5432/test
-    
     steps:
       - attach_workspace:
           at: .
@@ -77,17 +75,10 @@ jobs:
       - run:
           name: Validate QA test data
           command: |
-            pwd;
-            export PGPASSWORD='qaPassword'; psql -h localhost -p 5432 -U qa qa < sql/qa.sql
-            psql -h localhost -p 5432 -U qa -c "CREATE USER test WITH PASSWORD 'testPassword'";
-            psql -h localhost -p 5432 -U qa -c "CREATE DATABASE test;"
-            psql -h localhost -p 5432 -U qa -c "GRANT ALL PRIVILEGES ON DATABASE test to test;"
-            export PGPASSWORD='testPassword'; psql -h localhost -p 5432 -U test test < sql/test.sql
-            echo "127.0.0.1 qa.api.test api.test" | sudo tee -a /etc/hosts;
+            ./.circleci/test_db.sh
       - run: 
           name: Start Server
           command: |
-            ping -c 4 api.test
             ./.circleci/qa.sh
           when: always
       - run:

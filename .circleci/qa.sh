@@ -13,9 +13,16 @@ screen -d -m -S api sbt \
            "run 80"
 
 # Wait for the server to start up
-curl --retry 60 \
+curl --retry 120 \
      --retry-connrefused \
-     --retry-max-time 60 \
+     --retry-max-time 120 \
+     --retry-delay 1 \
+     http://127.0.0.1
+
+# Wait for the server to start up
+curl --retry 120 \
+     --retry-connrefused \
+     --retry-max-time 120 \
      --retry-delay 1 \
      http://api.test
 
