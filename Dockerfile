@@ -115,6 +115,7 @@ RUN addgroup -S qa && adduser -S -g audio,video qa \
 RUN adduser qa wheel
 RUN sed -e 's;^# \(%wheel.*NOPASSWD.*\);\1;g' -i /etc/sudoers
 USER qa
+RUN cd /home/qa
 
 ENV JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk
 ENV PATH="$JAVA_HOME/bin:${PATH}"
@@ -129,6 +130,7 @@ ENV PATH /home/qa/.local/bin:/home/qa/sbt/bin:/home/qa/bin:${PATH}
 
 # sbt build
 RUN env
+RUN pwd
 RUN sbt sbtVersion
 RUN pwd;ls
 RUN yarn --version
