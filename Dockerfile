@@ -116,6 +116,9 @@ RUN adduser qa wheel
 RUN sed -e 's;^# \(%wheel.*NOPASSWD.*\);\1;g' -i /etc/sudoers
 USER qa
 
+ENV JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk
+ENV PATH="$JAVA_HOME/bin:${PATH}"
+
 # Install sbt user qa
 RUN curl -L -o /home/qa/sbt.zip https://github.com/sbt/sbt/releases/download/v1.2.8/sbt-1.2.8.zip \
 	&& unzip /home/qa/sbt.zip -d /home/qa \
@@ -125,6 +128,7 @@ RUN curl -L -o /home/qa/sbt.zip https://github.com/sbt/sbt/releases/download/v1.
 ENV PATH /home/qa/.local/bin:/home/qa/sbt/bin:/home/qa/bin:${PATH}
 
 # sbt build
+RUN env
 RUN sbt sbtVersion
 RUN pwd;ls
 RUN yarn --version
