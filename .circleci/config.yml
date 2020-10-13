@@ -80,7 +80,6 @@ jobs:
           name: Start Server
           command: |
             ./.circleci/qa.sh
-          when: always
       - run:
           name: Test Frontend Reactjs
           command: |
@@ -153,9 +152,9 @@ jobs:
           command: |
             .circleci/test_db.sh
       - run:
-          name: Validate hosts file
+          name: Start Server
           command: |
-            curl http://api.test
+            ./.circleci/qa.sh
 
 workflows:
   version: 2
