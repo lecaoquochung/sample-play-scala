@@ -39,9 +39,9 @@ RUN curl -L -o /root/sbt.zip https://github.com/sbt/sbt/releases/download/v1.2.8
 
 # # Put tools like aws and sbt in the PATH
 ENV PATH /root/.local/bin:/root/sbt/bin:/root/bin:${PATH}
-#
-# # sbt build
-# RUN sbt sbtVersion
+
+# sbt build
+RUN sbt sbtVersion
 
 # The scala server will run on port 9000 by default
 EXPOSE 9000
@@ -116,13 +116,13 @@ RUN adduser qa wheel
 RUN sed -e 's;^# \(%wheel.*NOPASSWD.*\);\1;g' -i /etc/sudoers
 USER qa
 
-# Install sbt
-#RUN curl -L -o /home/qa/sbt.zip https://github.com/sbt/sbt/releases/download/v1.2.8/sbt-1.2.8.zip \
-#	&& unzip /home/qa/sbt.zip -d /home/qa \
-#	&& rm /home/qa/sbt.zip
+# Install sbt user qa
+RUN curl -L -o /home/qa/sbt.zip https://github.com/sbt/sbt/releases/download/v1.2.8/sbt-1.2.8.zip \
+	&& unzip /home/qa/sbt.zip -d /home/qa \
+	&& rm /home/qa/sbt.zip
 
 # Put tools like aws and sbt in the PATH
-#ENV PATH /home/qa/.local/bin:/home/qa/sbt/bin:/home/qa/bin:${PATH}
+ENV PATH /home/qa/.local/bin:/home/qa/sbt/bin:/home/qa/bin:${PATH}
 
 # sbt build
 RUN sbt sbtVersion
