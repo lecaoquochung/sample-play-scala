@@ -115,7 +115,7 @@ RUN addgroup -S qa && adduser -S -g audio,video qa \
 RUN adduser qa wheel
 RUN sed -e 's;^# \(%wheel.*NOPASSWD.*\);\1;g' -i /etc/sudoers
 USER qa
-RUN cd /home/qa
+WORKDIR /home/qa
 
 ENV JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk
 ENV PATH="$JAVA_HOME/bin:${PATH}"
