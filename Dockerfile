@@ -134,6 +134,7 @@ RUN curl -O https://bootstrap.pypa.io/get-pip.py \
 	&& python3 get-pip.py --user \
 	&& pip3 install awscli --upgrade --user \
 	&& rm get-pip.py
+RUN sudo ln -s /home/qa/.local/bin/aws /usr/local/bin/aws
 
 # sbt build
 RUN env
