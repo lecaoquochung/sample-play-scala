@@ -80,7 +80,8 @@ RUN apk add --no-cache \
       freetype \
       freetype-dev \
       harfbuzz \
-      ttf-freefont
+      ttf-freefont \
+      font-ipa@edge
 
 # ENV CHROME_BIN="/usr/bin/chromium-browser" \
 #     PUPPETEER_SKIP_CHROMIUM_DOWNLOAD="true"
