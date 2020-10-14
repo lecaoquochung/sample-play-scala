@@ -125,6 +125,11 @@ RUN curl -L -o /home/qa/sbt.zip https://github.com/sbt/sbt/releases/download/v1.
 	&& unzip /home/qa/sbt.zip -d /home/qa \
 	&& rm /home/qa/sbt.zip
 
+RUN curl -O https://bootstrap.pypa.io/get-pip.py \
+	&& python3 get-pip.py --user \
+	&& pip3 install awscli --upgrade --user \
+	&& rm get-pip.py
+
 # Put tools like aws and sbt in the PATH
 ENV PATH /home/qa/.local/bin:/home/qa/sbt/bin:/home/qa/bin:${PATH}
 RUN sudo ln -s /home/qa/sbt/bin/sbt /usr/local/bin/sbt
@@ -136,5 +141,6 @@ RUN sbt sbtVersion
 RUN pwd;ls -all 
 RUN yarn --version
 RUN cat /home/qa/package.json
-RUN sudo aws --version
 RUN sudo chmod 4755 /bin/ping
+RUN sudo aws --version
+RUN aws --version
