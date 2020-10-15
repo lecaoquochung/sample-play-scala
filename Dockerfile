@@ -80,9 +80,10 @@ RUN apk add --no-cache \
       freetype \
       freetype-dev \
       harfbuzz \
-      ttf-freefont \
-      fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst ttf-freefont
-
+      ttf-freefont
+      
+RUN apk add --no-cache \
+     fonts-ipafont-gothic
 
 # ENV CHROME_BIN="/usr/bin/chromium-browser" \
 # PUPPETEER_SKIP_CHROMIUM_DOWNLOAD="true"
