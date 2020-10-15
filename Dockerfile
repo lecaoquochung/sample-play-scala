@@ -83,7 +83,7 @@ RUN apk add --no-cache \
       ttf-freefont
       
 RUN apk add --no-cache \
-     fonts-ipafont-gothic
+     font-noto-gothic
 
 # ENV CHROME_BIN="/usr/bin/chromium-browser" \
 # PUPPETEER_SKIP_CHROMIUM_DOWNLOAD="true"
