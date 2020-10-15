@@ -9,6 +9,10 @@ FROM alpine:3.12
 
 RUN apk update && apk upgrade
 
+# japanese font
+RUN apk add --no-cache curl fontconfig font-noto-cjk \
+  && fc-cache -fv
+
 RUN apk add --no-cache \
     java-cacerts openjdk8 ca-certificates \
     git openssh curl \
