@@ -9,6 +9,10 @@ FROM alpine:3.12
 
 RUN apk update && apk upgrade
 
+# japanese font
+RUN apk add --no-cache curl fontconfig font-noto-cjk \
+  && fc-cache -fv
+
 RUN apk add --no-cache \
     java-cacerts openjdk8 ca-certificates \
     git openssh curl \
@@ -30,18 +34,18 @@ RUN java -version; \
     yarn -v; \
     psql -V;
 
-WORKDIR /home/qa
+WORKDIR /root/qa
 
 # # Install sbt
-# RUN curl -L -o /root/sbt.zip https://github.com/sbt/sbt/releases/download/v1.2.8/sbt-1.2.8.zip \
-# 	&& unzip /root/sbt.zip -d /root \
-# 	&& rm /root/sbt.zip
-#
+RUN curl -L -o /root/sbt.zip https://github.com/sbt/sbt/releases/download/v1.2.8/sbt-1.2.8.zip \
+ 	&& unzip /root/sbt.zip -d /root \
+ 	&& rm /root/sbt.zip
+
 # # Put tools like aws and sbt in the PATH
 ENV PATH /root/.local/bin:/root/sbt/bin:/root/bin:${PATH}
-#
-# # sbt build
-# RUN sbt sbtVersion
+
+# sbt build
+RUN sbt sbtVersion
 
 # The scala server will run on port 9000 by default
 EXPOSE 9000
@@ -81,9 +85,12 @@ RUN apk add --no-cache \
       freetype-dev \
       harfbuzz \
       ttf-freefont
+      
+RUN apk add --no-cache \
+     font-noto-gothic
 
 # ENV CHROME_BIN="/usr/bin/chromium-browser" \
-#     PUPPETEER_SKIP_CHROMIUM_DOWNLOAD="true"
+# PUPPETEER_SKIP_CHROMIUM_DOWNLOAD="true"
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
@@ -98,6 +105,7 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 #     && PUPPETEER_PRODUCT=firefox npm install
 
 # Init yarn dependencies
+RUN mkdir -p /home/qa
 COPY package.json /home/qa
 RUN yarn install
 RUN yarn add puppeteer
@@ -114,18 +122,34 @@ RUN addgroup -S qa && adduser -S -g audio,video qa \
 RUN adduser qa wheel
 RUN sed -e 's;^# \(%wheel.*NOPASSWD.*\);\1;g' -i /etc/sudoers
 USER qa
+WORKDIR /home/qa
 
-# Install sbt
+ENV JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk
+ENV PATH="$JAVA_HOME/bin:${PATH}"
+
+# Install sbt user qa
 RUN curl -L -o /home/qa/sbt.zip https://github.com/sbt/sbt/releases/download/v1.2.8/sbt-1.2.8.zip \
 	&& unzip /home/qa/sbt.zip -d /home/qa \
 	&& rm /home/qa/sbt.zip
 
 # Put tools like aws and sbt in the PATH
 ENV PATH /home/qa/.local/bin:/home/qa/sbt/bin:/home/qa/bin:${PATH}
+RUN sudo ln -s /home/qa/sbt/bin/sbt /usr/local/bin/sbt
+
+# aws-cli
+RUN curl -O https://bootstrap.pypa.io/get-pip.py \
+	&& python3 get-pip.py --user \
+	&& pip3 install awscli --upgrade --user \
+	&& rm get-pip.py
+RUN sudo ln -s /home/qa/.local/bin/aws /usr/local/bin/aws
 
 # sbt build
+RUN env
+RUN pwd
 RUN sbt sbtVersion
-RUN pwd;ls
+RUN pwd;ls -all 
 RUN yarn --version
 RUN cat /home/qa/package.json
+RUN sudo chmod 4755 /bin/ping
 RUN sudo aws --version
+RUN aws --version

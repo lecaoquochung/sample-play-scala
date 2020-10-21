@@ -5,7 +5,6 @@
   "description": "sample play scala",
   "dependencies": {
     "@cucumber/cucumber": "^7.0.0-rc.0",
-    "cucumber": "^7.0.0-rc.0",
     "moment": "^2.29.1",
     "path": "^0.12.7",
     "puppeteer": "^5.3.1",

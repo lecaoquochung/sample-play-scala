@@ -69,19 +69,11 @@ jobs:
       - run:
           name: Validate dockerfile dependencies
           command: |
-            npm --version;
-            yarn --version;
-            psql -V;
-      - run:
-          name: Validate dockerfile dependencies
-          command: |
             npm --version; # npm install # TODO type safe error in node_modules
             yarn --version;
             psql -V;
-      
       # - run: sbt "runMain" # TODO research # - run: sbt "runMain models.enums.EnumsGen" # 
       - run: sbt test
-
       - run:
           name: Validate QA test data
           command: |
@@ -92,25 +84,20 @@ jobs:
             psql -h localhost -p 5432 -U qa -c "GRANT ALL PRIVILEGES ON DATABASE test to test;"
             export PGPASSWORD='testPassword'; psql -h localhost -p 5432 -U test test < sql/test.sql
             echo "127.0.0.1 qa.api.test api.test" | sudo tee -a /etc/hosts;
-
       - run: 
           name: Start Server
           command: |
-            sudo ping -c 4 api.test
             ./.circleci/qa.sh
           when: always
-
       - run:
           name: Test Frontend Reactjs
           command: |
             yarn webpack --mode=development
           when: always
-
       - run:
           name: Test Cucumber
           command: |
             yarn cucumber -f json:report/report.json --publish
-
       - run:
           name: Test artifacts
           command: |
