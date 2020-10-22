@@ -153,3 +153,5 @@ RUN cat /home/qa/package.json
 RUN sudo chmod 4755 /bin/ping
 RUN sudo aws --version
 RUN aws --version
+RUN python3 --version
+RUN pip3 --version

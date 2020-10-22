@@ -14,7 +14,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 1602000000
+              "duration": 4223000000
             }
           },
           {
@@ -27,7 +27,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 2000000
+              "duration": 1000000
             }
           },
           {
@@ -53,7 +53,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 1000000
+              "duration": 0
             }
           },
           {
@@ -61,7 +61,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 65000000
+              "duration": 88000000
             }
           }
         ],
@@ -101,7 +101,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 1177000000
+              "duration": 906000000
             }
           },
           {
@@ -110,7 +110,7 @@
             "line": 6,
             "name": "Puppeteer is config",
             "match": {
-              "location": "features/step_definitions/puppeteer.js:8"
+              "location": "features/step_definitions/puppeteer.js:4"
             },
             "result": {
               "status": "passed",
@@ -123,11 +123,11 @@
             "line": 7,
             "name": "I open Google homepage",
             "match": {
-              "location": "features/step_definitions/puppeteer.js:12"
+              "location": "features/step_definitions/puppeteer.js:8"
             },
             "result": {
               "status": "passed",
-              "duration": 3794000000
+              "duration": 4597000000
             }
           },
           {
@@ -136,11 +136,19 @@
             "line": 8,
             "name": "I can see Google homepage",
             "match": {
-              "location": "features/step_definitions/puppeteer.js:19"
+              "location": "features/step_definitions/puppeteer.js:21"
             },
             "result": {
               "status": "passed",
-              "duration": 2000000
+              "duration": 309000000
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 73000000
             }
           }
         ],
