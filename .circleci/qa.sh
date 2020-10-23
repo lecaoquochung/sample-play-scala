@@ -7,15 +7,22 @@ yarn install
 # Start the scala server in the background
 # screen -d -m -S api /root/sbt/bin/sbt -Dconfig.file=conf/application.conf -Dplay.evolutions.db.default.autoApply=true "run 80"
 # curl --retry 60 --retry-connrefused --retry-max-time 60 --retry-delay 1 http://127.0.0.1
-screen -d -m -S api sbt \
+screen -d -m -S api sudo -E sbt \
            -Dconfig.file=conf/application.conf \
            -Dplay.evolutions.db.default.autoApply=true \
            "run 80"
 
 # Wait for the server to start up
-curl --retry 60 \
+curl --retry 120 \
      --retry-connrefused \
-     --retry-max-time 60 \
+     --retry-max-time 120 \
+     --retry-delay 1 \
+     http://127.0.0.1
+
+# Wait for the server to start up
+curl --retry 120 \
+     --retry-connrefused \
+     --retry-max-time 120 \
      --retry-delay 1 \
      http://api.test
 
@@ -30,4 +37,4 @@ curl --retry 60 \
 # cd /home/qa/; ./help.sh cli test cucumber local tag "@api"
 
 # Kill the background server
-screen -S api -X quit
+#screen -S api -X quit

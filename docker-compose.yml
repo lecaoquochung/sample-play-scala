@@ -2,13 +2,31 @@ version: '3.3'
 
 services:
   scala:
+    container_name: scala-build
     build:
       context: .
       dockerfile: Dockerfile
-    working_dir: /home/qa
+    working_dir: /home/qa/code
     volumes:
-      - ".:/home/qa"
+      - ".:/home/qa/code"
     entrypoint: ["sh", "-c", "sleep infinity"]
     environment:
       - TZ=Asia/Tokyo
       - LC_ALL=en_US.UTF-8
+    # ports:
+      # - 9001:80
+      # - 9002:9000
+
+  scala-test:
+    container_name: scala-test
+    image: lecaoquochung/scala:dev
+    working_dir: /home/qa/code
+    volumes:
+      - ".:/home/qa/code"
+    entrypoint: [ "sh", "-c", "sleep infinity" ]
+    environment:
+      - TZ=Asia/Tokyo
+      - LC_ALL=en_US.UTF-8
+    # ports:
+      # - 9003:80
+      # - 9004:9000

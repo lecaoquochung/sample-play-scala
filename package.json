@@ -1,8 +1,11 @@
 {
   "name": "sample-play-scala",
-  "version": "1.0.1",
+  "version": "1.0.0-build-1",
+  "license": "MIT",
   "description": "sample play scala",
   "dependencies": {
+    "moment": "^2.29.1",
+    "path": "^0.12.7",
     "puppeteer": "^5.3.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
@@ -11,8 +14,16 @@
     "@babel/core": "^7.11.6",
     "@babel/preset-env": "^7.11.5",
     "@babel/preset-react": "^7.10.4",
+    "@cucumber/cucumber": "^7.0.0-rc.0",
     "babel-loader": "^8.1.0",
     "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12"
-  }
+  },
+  "scripts": {
+    "test": "jest -i",
+    "cucumber": "cucumber-js"
+  },
+  "main": "index.js",
+  "repository": "git@github.com:lecaoquochung/sample-play-scala.git",
+  "author": "lecaoquochung <lecaoquochung@gmail.com>"
 }
