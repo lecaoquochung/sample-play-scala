@@ -4,4 +4,4 @@ mkdir -p test-results/cucumber
 # cp *.json /home/qa/test-results/
 mkdir -p artifact
 cp sql/*.sql artifact/
-cp report/* artifact/
+cp -rfv report/* artifact/

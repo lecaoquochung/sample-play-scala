@@ -19,13 +19,21 @@ class CodewarController @Inject()(val controllerComponents: ControllerComponents
    * will be called when the application receives a `GET` request with
    * a path of `/`.
    */
-  def index() = Action { implicit request: Request[AnyContent] =>
-    Ok(views.html.index())
+//  def index() = Action { implicit request: Request[AnyContent] =>
+//    Ok(views.html.index())
+//  }
+  def index() = Action {
+    Ok("ok")
   }
 
   def repeatStr(times: Int, str: String): String = {
     val result = str * times
     result
+  }
+
+//  https://www.codewars.com/kata/5168bb5dfe9a00b126000018/train/scala
+  def reverseString(word: String): String = {
+    word.reverse
   }
 
 }
