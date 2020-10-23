@@ -1,7 +1,7 @@
 # https://hub.docker.com/repository/docker/lecaoquochung/scala
 # https://github.com/lecaoquochung/sample-play-scala
 # scala-build
-# image: lecaoquochung/scala:latest / branch build-latest
+# image: lecaoquochung/scala:latest / branch master
 # image: lecaoquochung/scala:dev    / branch build-dev
 # image: lecaoquochung/scala:stable / branch build-stable
 
