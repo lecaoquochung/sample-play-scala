@@ -1,6 +1,6 @@
 const { BeforeAll, Before, After, AfterAll } = require('@cucumber/cucumber');
- var {setDefaultTimeout} = require('@cucumber/cucumber');
- setDefaultTimeout(60 * 1000);
+var {setDefaultTimeout} = require('@cucumber/cucumber');
+setDefaultTimeout(60 * 100);
 
 // lib
 const moment = require('moment');

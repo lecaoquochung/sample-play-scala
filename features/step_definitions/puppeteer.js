@@ -1,5 +1,6 @@
 const assert = require('assert');
-const { Given, When, Then } = require('cucumber');
+// const { Given, When, Then } = require('cucumber');
+const { Given, When, Then } = require('@cucumber/cucumber');
 
 Given('Puppeteer is config', async function () {
 //   Write code here that turns the phrase above into concrete actions

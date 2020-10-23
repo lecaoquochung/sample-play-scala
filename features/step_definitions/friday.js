@@ -1,5 +1,6 @@
 const assert = require('assert');
-const { Given, When, Then } = require('cucumber');
+// const { Given, When, Then } = require('cucumber');
+const { Given, When, Then } = require('@cucumber/cucumber');
 
 function isItFriday(today) {
   if (today === "Friday") {

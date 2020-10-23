@@ -13,9 +13,9 @@ services:
     environment:
       - TZ=Asia/Tokyo
       - LC_ALL=en_US.UTF-8
-    ports:
-      - 9001:80
-      - 9002:9000
+    # ports:
+      # - 9001:80
+      # - 9002:9000
 
   scala-test:
     container_name: scala-test
@@ -27,6 +27,6 @@ services:
     environment:
       - TZ=Asia/Tokyo
       - LC_ALL=en_US.UTF-8
-    ports:
-      - 9003:80
-      - 9004:9000
+    # ports:
+      # - 9003:80
+      # - 9004:9000
