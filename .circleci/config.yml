@@ -45,7 +45,7 @@ jobs:
     <<: *qa_system
     docker:
       - image: lecaoquochung/scala:dev
-      - image: postgres:9.6.11
+      - image: postgres:latest
         environment:
           - POSTGRES_DB=qa
           - POSTGRES_USER=qa
@@ -102,7 +102,7 @@ jobs:
     <<: *qa_system
     docker:
       - image: lecaoquochung/scala:dev
-      - image: postgres:9.6.11
+      - image: postgres:latest
         environment:
           - POSTGRES_DB=qa
           - POSTGRES_USER=qa
