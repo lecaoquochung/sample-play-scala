@@ -7,11 +7,11 @@ Documentation     A resource file with reusable keywords and variables.
 Library           SeleniumLibrary
 
 *** Variables ***
-${SERVER}         0.0.0.0:9001
+${SERVER}         localhost:39001
 ${BROWSER}        Firefox
 ${DELAY}          0
 ${VALID USER}     demo
-${VALID PASSWORD} mode
+${VALID PASSWORD}  mode
 ${LOGIN URL}      http://${SERVER}/
 ${WELCOME URL}    http://${SERVER}/welcome.html
 ${ERROR URL}      http://${SERVER}/error.html

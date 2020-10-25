@@ -1,6 +1,6 @@
 {
   "name": "sample-play-scala",
-  "version": "1.0.0-build-2-robotframework",
+  "version": "1.0.0-build-3-firefox",
   "license": "MIT",
   "description": "sample play scala",
   "dependencies": {

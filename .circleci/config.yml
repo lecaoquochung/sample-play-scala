@@ -79,7 +79,7 @@ jobs:
       - run: 
           name: Start Server
           command: |
-            ./.circleci/qa.sh
+            ./.circleci/start-server.sh
       - run:
           name: Test Frontend Reactjs
           command: |
@@ -146,7 +146,7 @@ jobs:
       - run:
           name: Start Server
           command: |
-            ./.circleci/qa.sh
+            ./.circleci/start-server.sh
       - run:
           name: Test Cucumber
           command: |
