@@ -20,9 +20,14 @@ services:
     working_dir: /home/qa/code
     volumes:
       - ".:/home/qa/code"
-    entrypoint: ["sh", "-c", "sbt run"]
-    # command: >
-    #   sh -c "python3 robotframework/login/server.py" 
+    # entrypoint: ["sh", "-c", "sbt -Dconfig.file=conf/application.conf -Dplay.evolutions.db.default.autoApply=true run"]
+    command: >
+      sh -c "
+        sbt 
+          -Dconfig.file=conf/application.conf \
+          -Dplay.evolutions.db.default.autoApply=true \
+          run
+      " 
     environment:
       - TZ=Asia/Tokyo
       - LC_ALL=en_US.UTF-8

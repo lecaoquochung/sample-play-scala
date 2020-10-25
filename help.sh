@@ -68,7 +68,9 @@ status() {
 # run logs
 logs() {
 	case $1 in
-		php|*) docker-compose logs ;;
+		python) docker-compose logs python;;
+		scala) docker-compose logs scala;;
+		all|*) docker-compose logs ;;
 	esac
 }
 
