@@ -1,22 +1,24 @@
-![](https://img.shields.io/docker/cloud/build/lecaoquochung/scala)
+![](https://img.shields.io/docker/cloud/build/lecaoquochung/scala) ![](https://img.shields.io/circleci/build/github/lecaoquochung/sample-play-scala)
 
-# sample play scala
+# Scala
 
 # Cucumber
 - Generate json report
 ```
 yarn cucumber -f json:report/report.json --publish
 yarn cucumber --tags="@friday" -f json:report/friday.json
-yarn cucumber --tags="@puppeteer" -f json:report/puppeteer.json
-```
-- Share report
-```
-yarn cucumber -f json:report/report.json --publish  
 ```
 
 # Puppeteer
+```
+yarn cucumber --tags="@puppeteer" -f json:report/puppeteer.json
+```
 
 # Robotframework
+```
+pip3 install -r requirements.txt
+robot robotframework/login_tests
+```
 
 # Reference
 https://github.com/buildkite/docker-puppeteer

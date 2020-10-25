@@ -89,8 +89,6 @@ RUN apk add --no-cache \
 RUN apk add --no-cache \
      font-noto-gothic
 
-# ENV CHROME_BIN="/usr/bin/chromium-browser" \
-# PUPPETEER_SKIP_CHROMIUM_DOWNLOAD="true"
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
@@ -143,7 +141,11 @@ RUN curl -O https://bootstrap.pypa.io/get-pip.py \
 	&& rm get-pip.py
 RUN sudo ln -s /home/qa/.local/bin/aws /usr/local/bin/aws
 
-# sbt build
+# robotframework
+COPY requirements.txt /home/qa
+RUN pip3 install -r requirements.txt
+
+# build
 RUN env
 RUN pwd
 RUN sbt sbtVersion
