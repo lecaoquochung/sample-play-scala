@@ -14,7 +14,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 4223000000
+              "duration": 959000000
             }
           },
           {
@@ -23,7 +23,7 @@
             "line": 6,
             "name": "today is \"Friday\"",
             "match": {
-              "location": "features/step_definitions/friday.js:12"
+              "location": "features/step_definitions/friday.js:13"
             },
             "result": {
               "status": "passed",
@@ -36,7 +36,7 @@
             "line": 7,
             "name": "I ask whether it's Friday yet",
             "match": {
-              "location": "features/step_definitions/friday.js:16"
+              "location": "features/step_definitions/friday.js:17"
             },
             "result": {
               "status": "passed",
@@ -49,11 +49,11 @@
             "line": 8,
             "name": "I should be told \"TGIF\"",
             "match": {
-              "location": "features/step_definitions/friday.js:20"
+              "location": "features/step_definitions/friday.js:21"
             },
             "result": {
               "status": "passed",
-              "duration": 0
+              "duration": 2000000
             }
           },
           {
@@ -61,7 +61,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 88000000
+              "duration": 125000000
             }
           }
         ],
@@ -85,92 +85,5 @@
       }
     ],
     "uri": "features/friday.feature"
-  },
-  {
-    "description": "  Use Puppeteer to open web page",
-    "elements": [
-      {
-        "description": "",
-        "id": "puppeteer;puppeteer-can-be-used-without-error",
-        "keyword": "Scenario Outline",
-        "line": 5,
-        "name": "Puppeteer can be used without error",
-        "steps": [
-          {
-            "keyword": "Before",
-            "hidden": true,
-            "result": {
-              "status": "passed",
-              "duration": 906000000
-            }
-          },
-          {
-            "arguments": [],
-            "keyword": "Given ",
-            "line": 6,
-            "name": "Puppeteer is config",
-            "match": {
-              "location": "features/step_definitions/puppeteer.js:4"
-            },
-            "result": {
-              "status": "passed",
-              "duration": 1000000
-            }
-          },
-          {
-            "arguments": [],
-            "keyword": "When ",
-            "line": 7,
-            "name": "I open Google homepage",
-            "match": {
-              "location": "features/step_definitions/puppeteer.js:8"
-            },
-            "result": {
-              "status": "passed",
-              "duration": 4597000000
-            }
-          },
-          {
-            "arguments": [],
-            "keyword": "Then ",
-            "line": 8,
-            "name": "I can see Google homepage",
-            "match": {
-              "location": "features/step_definitions/puppeteer.js:21"
-            },
-            "result": {
-              "status": "passed",
-              "duration": 309000000
-            }
-          },
-          {
-            "keyword": "After",
-            "hidden": true,
-            "result": {
-              "status": "passed",
-              "duration": 73000000
-            }
-          }
-        ],
-        "tags": [
-          {
-            "name": "@puppeteer",
-            "line": 1
-          }
-        ],
-        "type": "scenario"
-      }
-    ],
-    "id": "puppeteer",
-    "line": 2,
-    "keyword": "Feature",
-    "name": "Puppeteer",
-    "tags": [
-      {
-        "name": "@puppeteer",
-        "line": 1
-      }
-    ],
-    "uri": "features/puppeteer.feature"
   }
 ]

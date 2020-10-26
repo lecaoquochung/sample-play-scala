@@ -10,6 +10,8 @@ import play.api.test.Helpers._
 
 import org.scalatest.{FlatSpec, Matchers}
 
+import scala.collection.mutable
+
 /**
  * Add your spec here.
  * You can mock out a whole application including requests, plugins etc.
