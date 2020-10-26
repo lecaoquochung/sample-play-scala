@@ -89,8 +89,6 @@ RUN apk add --no-cache \
 RUN apk add --no-cache \
      font-noto-gothic
 
-# ENV CHROME_BIN="/usr/bin/chromium-browser" \
-# PUPPETEER_SKIP_CHROMIUM_DOWNLOAD="true"
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
@@ -109,6 +107,28 @@ RUN mkdir -p /home/qa
 COPY package.json /home/qa
 RUN yarn install
 RUN yarn add puppeteer
+
+# Firefox geckodriver
+# https://github.com/lecaoquochung/geckodriver-alpine/blob/master/Dockerfile
+# Get all the prereqs
+RUN wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub
+RUN wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.30-r0/glibc-2.30-r0.apk
+RUN wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.30-r0/glibc-bin-2.30-r0.apk
+RUN apk add glibc-2.30-r0.apk
+RUN apk add glibc-bin-2.30-r0.apk
+
+# And of course we need Firefox if we actually want to *use* GeckoDriver
+# RUN apk add firefox-esr=60.9.0-r0
+RUN apk update && apk upgrade
+RUN apk add firefox
+RUN rm -rf /var/cache/apk/*
+
+# Then install GeckoDriver
+# RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-linux64.tar.gz
+# RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-linux64.tar.gz
+# RUN tar -zxf geckodriver-v0.26.0-linux64.tar.gz -C /usr/bin
+RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.27.0/geckodriver-v0.27.0-linux64.tar.gz
+RUN tar -zxf geckodriver-v0.27.0-linux64.tar.gz -C /usr/bin
 
 # Add user so we don't need --no-sandbox.
 RUN addgroup -S qa && adduser -S -g audio,video qa \
@@ -143,7 +163,11 @@ RUN curl -O https://bootstrap.pypa.io/get-pip.py \
 	&& rm get-pip.py
 RUN sudo ln -s /home/qa/.local/bin/aws /usr/local/bin/aws
 
-# sbt build
+# robotframework
+COPY requirements.txt /home/qa
+RUN pip3 install -r requirements.txt
+
+# build
 RUN env
 RUN pwd
 RUN sbt sbtVersion
@@ -155,3 +179,4 @@ RUN sudo aws --version
 RUN aws --version
 RUN python3 --version
 RUN pip3 --version
+RUN geckodriver --version
