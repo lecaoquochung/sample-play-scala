@@ -1,15 +1,11 @@
 package controllers
 
-//コピペ
 import javax.inject._
 import play.api.mvc._
-
 import play.api.data._
 import play.api.data.Forms._
 import services._
-//コピペ
 
-//入力
 //class TodoController @Inject()(mcc: MessagesControllerComponents) extends
 // MessagesAbstractController(mcc) {
 class TodoController @Inject()(todoService: TodoService, mcc: MessagesControllerComponents)

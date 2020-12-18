@@ -68,7 +68,9 @@ status() {
 # run logs
 logs() {
 	case $1 in
-		php|*) docker-compose logs ;;
+		python) docker-compose logs python;;
+		scala) docker-compose logs scala;;
+		all|*) docker-compose logs ;;
 	esac
 }
 
@@ -83,17 +85,27 @@ run_ssh() {
 
 # run cli
 run_cli() {
-	echo "Bash version ${BASH_VERSION}..."
-	for i in {1..10}
-	do
-		echo "${!i}"
-	done
+	# echo "Bash version ${BASH_VERSION}..."
+	# for i in {1..10}
+	# do
+	# 	printf "${i}:${!i} "
+	# done
+	# echo " "
 
-	case $1 in
+	case $2 in
+		help)
+cat <<EOF
+
+# cucumber
+cli yarn cucumber --tags="@friday" -f json:report/report.json --publish
+
+# robotframework
+EOF
+		;;
 		*)
 		  docker-compose exec -T ${NAME} /bin/bash -c \
 			  " \
-				${1} ${2} ${3} ${4} ${5} ${6} ${7} ${8} ${9} ${10} \
+				${2} ${3} ${4} ${5} ${6} ${7} ${8} ${9} ${10} \
 				${11} ${12} ${13} ${14} ${15} ${16} ${17} ${18} ${19} ${20} \
 		    ${21} ${22} ${23} ${24} ${25} ${26} ${27} ${28} ${29} ${30} \
 		    ${31} ${32} ${33} ${34} ${35} ${36} ${37} ${38} ${39} ${40}
@@ -105,7 +117,7 @@ run_cli() {
 case $1 in
   cli)
 	  run_cli \
-    ${1} ${2} ${3} ${4} ${5} ${6} ${7} ${8} ${9} ${10} \
+    ${1} ${2:-help} ${3} ${4} ${5} ${6} ${7} ${8} ${9} ${10} \
 		${11} ${12} ${13} ${14} ${15} ${16} ${17} ${18} ${19} ${20} \
 		${21} ${22} ${23} ${24} ${25} ${26} ${27} ${28} ${29} ${30} \
 		${31} ${32} ${33} ${34} ${35} ${36} ${37} ${38} ${39} ${40}
