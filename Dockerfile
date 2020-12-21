@@ -1,27 +1,111 @@
-# https://hub.docker.com/repository/docker/lecaoquochung/scala
-# https://github.com/lecaoquochung/sample-play-scala
-# scala-build
-# image: lecaoquochung/scala:latest / branch build-latest
-# image: lecaoquochung/scala:dev    / branch build-dev
-# image: lecaoquochung/scala:stable / branch build-stable
+FROM ubuntu:bionic
 
-FROM alpine:3.12
+# === INSTALL BROWSER DEPENDENCIES ===
 
-RUN apk update && apk upgrade
+# Install WebKit dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libwoff1 \
+    libopus0 \
+    libwebp6 \
+    libwebpdemux2 \
+    libenchant1c2a \
+    libgudev-1.0-0 \
+    libsecret-1-0 \
+    libhyphen0 \
+    libgdk-pixbuf2.0-0 \
+    libegl1 \
+    libnotify4 \
+    libxslt1.1 \
+    libevent-2.1-6 \
+    libgles2 \
+    libvpx5 \
+    libxcomposite1 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libepoxy0 \
+    libgtk-3-0 \
+    libharfbuzz-icu0
+
+# Install gstreamer and plugins to support video playback in WebKit.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgstreamer-gl1.0-0 \
+    libgstreamer-plugins-bad1.0-0 \
+    gstreamer1.0-plugins-good \
+    gstreamer1.0-libav
+
+# Install Chromium dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libnss3 \
+    libxss1 \
+    libasound2 \
+    fonts-noto-color-emoji \
+    libxtst6
+
+# Install Firefox dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libdbus-glib-1-2 \
+    libxt6
+
+# Install ffmpeg to bring in audio and video codecs necessary for playing videos in Firefox.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ffmpeg
+
+# (Optional) Install XVFB if there's a need to run browsers in headful mode
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    xvfb
+
+# === INSTALL Node.js ===
+
+# Install node14
+RUN apt-get update && apt-get install -y curl && \
+    curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
+    apt-get install -y nodejs
+
+# Feature-parity with node.js base images.
+RUN apt-get update && apt-get install -y --no-install-recommends git ssh && \
+    npm install -g yarn
 
 # japanese font
-RUN apk add --no-cache curl fontconfig font-noto-cjk \
-  && fc-cache -fv
+RUN apt install -y \
+  fonts-noto \
+  fonts-ipafont \
+  fonts-ipaexfont \
+  fonts-vlgothic \
+  fonts-takao \
+  fonts-hanazono \
+  fonts-horai-umefont \
+  fonts-komatuna \
+  fonts-konatu \
+  fonts-migmix \
+  fonts-motoya-l-cedar \
+  fonts-motoya-l-maruberi \
+  fonts-mplus \
+  fonts-sawarabi-gothic \
+  fonts-sawarabi-mincho \
+  fonts-umeplus \
+  fonts-dejima-mincho \
+  fonts-misaki \
+  fonts-mona \
+  fonts-monapo \
+  fonts-oradano-mincho-gsrr \
+  fonts-kiloji \
+  fonts-mikachan \
+  fonts-seto \
+  fonts-yozvox-yozfont \
+  fonts-aoyagi-kouzan-t \
+  fonts-aoyagi-soseki \
+  fonts-kouzan-mouhitsu
+#   ttf-mscorefonts-installer
 
-RUN apk add --no-cache \
-    java-cacerts openjdk8 ca-certificates \
-    git openssh curl \
+# Instal java
+RUN apt-get update && apt-get install -y \
+    openjdk-8-jre ca-certificates \
+    openssh-server curl \
     python3 screen bash \
     zip tar \
-    nodejs npm \
-    libuv yarn \
     postgresql-client sudo \
-    iputils
+    iputils-ping \
+    python3-distutils
 
 ENV JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk
 ENV PATH="$JAVA_HOME/bin:${PATH}"
@@ -77,50 +161,39 @@ RUN curl -o /root/terraform.zip https://releases.hashicorp.com/terraform/0.10.3/
 	&& unzip /root/terraform.zip -d /usr/bin/ \
 	&& rm /root/terraform.zip
 
-# Install Puppeteer
-RUN apk add --no-cache \
-      chromium \
-      nss \
-      freetype \
-      freetype-dev \
-      harfbuzz \
-      ttf-freefont
-      
-RUN apk add --no-cache \
-     font-noto-gothic
-
-# ENV CHROME_BIN="/usr/bin/chromium-browser" \
-# PUPPETEER_SKIP_CHROMIUM_DOWNLOAD="true"
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
-
-# RUN set -x \
-#     && apk update \
-#     && apk upgrade \
-#     && apk add --no-cache \
-#     udev \
-#     ttf-freefont \
-#     chromium \
-#     && npm install puppeteer@5.3.1 \
-#     && PUPPETEER_PRODUCT=firefox npm install
-
 # Init yarn dependencies
 RUN mkdir -p /home/qa
-COPY package.json /home/qa
+COPY ./package.json /home/qa
 RUN yarn install
-RUN yarn add puppeteer
+RUN yarn add playwright
+
+# === BAKE BROWSERS INTO IMAGE ===
+
+# 1. Add tip-of-tree Playwright package to install its browsers.
+#    The package should be built beforehand from tip-of-tree Playwright.
+COPY ./docker/playwright.tar.gz /tmp/playwright.tar.gz
+
+# 2. Install playwright and then delete the installation.
+#    Browsers will remain downloaded in `/home/qa/.cache/ms-playwright`.
+RUN su root -c "mkdir /tmp/qa && cd /tmp/qa && npm init -y && \
+    npm i /tmp/playwright.tar.gz" && \
+    rm -rf /tmp/qa && rm /tmp/playwright.tar.gz
+
+# 3. Symlink downloaded browsers for root user
+# RUN mkdir /root/.cache/ && \
+    # ln -s /home/qa/.cache/ms-playwright/ /root/.cache/ms-playwright
+RUN mkdir /home/qa/.cache/ && \
+    ln -s /root/.cache/ms-playwright /home/qa/.cache/ms-playwright 
 
 # Add user so we don't need --no-sandbox.
-RUN addgroup -S qa && adduser -S -g audio,video qa \
+RUN groupadd -r qa && useradd -r -g qa -G audio,video qa \
     && mkdir -p /home/qa/Downloads /app \
     && chown -R qa:qa /home/qa \
     && chown -R qa:qa /app
 
 # Run everything after as non-privileged user.
-# RUN adduser qa sudo
-# RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-RUN adduser qa wheel
-RUN sed -e 's;^# \(%wheel.*NOPASSWD.*\);\1;g' -i /etc/sudoers
+RUN adduser qa sudo
+RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 USER qa
 WORKDIR /home/qa
 
@@ -137,13 +210,14 @@ ENV PATH /home/qa/.local/bin:/home/qa/sbt/bin:/home/qa/bin:${PATH}
 RUN sudo ln -s /home/qa/sbt/bin/sbt /usr/local/bin/sbt
 
 # aws-cli
-RUN curl -O https://bootstrap.pypa.io/get-pip.py \
+RUN sudo curl -O https://bootstrap.pypa.io/get-pip.py \
 	&& python3 get-pip.py --user \
 	&& pip3 install awscli --upgrade --user \
-	&& rm get-pip.py
+	&& sudo rm get-pip.py
 RUN sudo ln -s /home/qa/.local/bin/aws /usr/local/bin/aws
 
 # sbt build
+RUN whoami
 RUN env
 RUN pwd
 RUN sbt sbtVersion
@@ -151,5 +225,5 @@ RUN pwd;ls -all
 RUN yarn --version
 RUN cat /home/qa/package.json
 RUN sudo chmod 4755 /bin/ping
-RUN sudo aws --version
 RUN aws --version
+RUN sudo aws --version
