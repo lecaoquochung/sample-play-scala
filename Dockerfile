@@ -99,7 +99,7 @@ RUN apt install -y \
 
 # Instal java
 RUN apt-get update && apt-get install -y \
-    openjdk-8-jre ca-certificates \
+    openjdk-8-jdk ca-certificates \
     openssh-server curl \
     python3 screen bash \
     zip tar \
