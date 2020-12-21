@@ -105,7 +105,8 @@ RUN apt-get update && apt-get install -y \
     zip tar \
     postgresql-client sudo \
     iputils-ping \
-    python3-distutils
+    python3-distutils \
+    rsync
 
 ENV JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk
 ENV PATH="$JAVA_HOME/bin:${PATH}"
@@ -165,7 +166,6 @@ RUN curl -o /root/terraform.zip https://releases.hashicorp.com/terraform/0.10.3/
 RUN mkdir -p /home/qa
 COPY ./package.json /home/qa
 RUN yarn install
-RUN yarn add playwright
 
 # === BAKE BROWSERS INTO IMAGE ===
 
@@ -183,12 +183,14 @@ RUN su root -c "mkdir /tmp/qa && cd /tmp/qa && npm init -y && \
 # RUN mkdir /root/.cache/ && \
     # ln -s /home/qa/.cache/ms-playwright/ /root/.cache/ms-playwright
 RUN mkdir /home/qa/.cache/ && \
-    ln -s /root/.cache/ms-playwright /home/qa/.cache/ms-playwright 
+    # cp /root/.cache/ms-playwright /home/qa/.cache/ms-playwright 
+    rsync -av --exclude=/root/.cache/ms-playwright/* /root/.cache/ms-playwright/ /home/qa/.cache/ms-playwright
 
 # Add user so we don't need --no-sandbox.
 RUN groupadd -r qa && useradd -r -g qa -G audio,video qa \
     && mkdir -p /home/qa/Downloads /app \
     && chown -R qa:qa /home/qa \
+    && chown -R qa:qa /home/qa/.cache \
     && chown -R qa:qa /app
 
 # Run everything after as non-privileged user.
@@ -221,7 +223,7 @@ RUN whoami
 RUN env
 RUN pwd
 RUN sbt sbtVersion
-RUN pwd;ls -all 
+RUN pwd;ls -all; ls -all /home/qa
 RUN yarn --version
 RUN cat /home/qa/package.json
 RUN sudo chmod 4755 /bin/ping

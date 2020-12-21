@@ -5,11 +5,23 @@
   "description": "sample play scala",
   "dependencies": {
     "@cucumber/cucumber": "^7.0.0-rc.0",
+    "@types/jest": "^26.0.19",
+    "@types/mocha": "^8.2.0",
+    "chromedriver": "^87.0.4",
+    "jest": "^26.6.3",
+    "mocha": "^8.2.1",
     "moment": "^2.29.1",
     "path": "^0.12.7",
+    "playwright": "^1.7.0",
+    "prettier": "^2.2.1",
     "puppeteer": "^5.3.1",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "ts-jest": "^26.4.4",
+    "tslint": "^6.1.3",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-plugin-prettier": "^2.3.0",
+    "typescript": "^4.1.3"
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",
@@ -21,7 +33,9 @@
   },
   "scripts": {
     "test": "jest -i",
-    "cucumber": "cucumber-js"
+    "cucumber": "cucumber-js",
+    "test:playwright": "jest -i playwright --detectOpenHandles",
+    "lint": "npx tslint -c tslint.json './__tests__/*.ts'"
   },
   "main": "index.js",
   "repository": "git@github.com:lecaoquochung/sample-play-scala.git",
