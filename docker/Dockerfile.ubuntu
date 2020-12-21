@@ -65,6 +65,60 @@ RUN apt-get update && apt-get install -y curl && \
 RUN apt-get update && apt-get install -y --no-install-recommends git ssh && \
     npm install -g yarn
 
+# japanese font
+RUN apt install -y \
+  fonts-noto \
+  fonts-ipafont \
+  fonts-ipaexfont \
+  fonts-vlgothic \
+  fonts-takao \
+  fonts-hanazono \
+  fonts-horai-umefont \
+  fonts-komatuna \
+  fonts-konatu \
+  fonts-migmix \
+  fonts-motoya-l-cedar \
+  fonts-motoya-l-maruberi \
+  fonts-mplus \
+  fonts-sawarabi-gothic \
+  fonts-sawarabi-mincho \
+  fonts-umeplus \
+  fonts-dejima-mincho \
+  fonts-misaki \
+  fonts-mona \
+  fonts-monapo \
+  fonts-oradano-mincho-gsrr \
+  fonts-kiloji \
+  fonts-mikachan \
+  fonts-seto \
+  fonts-yozvox-yozfont \
+  fonts-aoyagi-kouzan-t \
+  fonts-aoyagi-soseki \
+  fonts-kouzan-mouhitsu
+#   ttf-mscorefonts-installer
+
+# Instal java
+RUN apt-get update && apt-get install -y \
+    openjdk-8-jre ca-certificates \
+    openssh-server curl \
+    python3 screen bash \
+    zip tar \
+    postgresql-client sudo \
+    iputils-ping
+
+ENV JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk
+ENV PATH="$JAVA_HOME/bin:${PATH}"
+
+# Basic test
+RUN java -version; \
+    javac -version; \
+    node -v; \
+    npm -v; \
+    yarn -v; \
+    psql -V;
+
+WORKDIR /root/qa
+
 # Create the pwuser (we internally create a symlink for the pwuser and the root user)
 RUN adduser pwuser
 
