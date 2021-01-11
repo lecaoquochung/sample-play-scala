@@ -106,7 +106,8 @@ RUN apt-get update && apt-get install -y \
     postgresql-client sudo \
     iputils-ping \
     python3-distutils \
-    rsync
+    rsync \
+    nginx
 
 ENV JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk
 ENV PATH="$JAVA_HOME/bin:${PATH}"
@@ -134,6 +135,9 @@ RUN sbt sbtVersion
 
 # The scala server will run on port 9000 by default
 EXPOSE 9000
+
+# nginx port
+EXPOSE 8080 
 
 # Install mocha for API testing
 RUN npm install -g mocha
