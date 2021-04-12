@@ -183,6 +183,11 @@ RUN python3 --version
 RUN pip3 --version
 RUN geckodriver --version
 
+# github
 RUN mkdir -p $HOME/.ssh/ && touch $HOME/.ssh/known_hosts
 RUN ssh-keyscan github.com >> $HOME/.ssh/known_hosts
 RUN cat $HOME/.ssh/known_hosts
+
+RUN sudo mkdir -p $HOME/.ssh/ && sudo touch $HOME/.ssh/known_hosts
+RUN sudo ssh-keyscan github.com >> $HOME/.ssh/known_hosts
+RUN sudo cat $HOME/.ssh/known_hosts
