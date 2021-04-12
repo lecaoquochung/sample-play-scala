@@ -5,7 +5,7 @@
 # image: lecaoquochung/scala:dev    / branch build-dev
 # image: lecaoquochung/scala:stable / branch build-stable
 
-FROM alpine:3.12
+FROM alpine:3.13
 
 RUN apk update && apk upgrade
 
@@ -23,6 +23,8 @@ RUN apk add --no-cache \
     postgresql-client sudo \
     iputils
 
+#RUN apk add --no-cache --repository http://dl-4.alpinelinux.org/alpine/v3.12/main nodejs=12.21.0-r0 npm
+
 ENV JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk
 ENV PATH="$JAVA_HOME/bin:${PATH}"
 
@@ -37,7 +39,7 @@ RUN java -version; \
 WORKDIR /root/qa
 
 # # Install sbt
-RUN curl -L -o /root/sbt.zip https://github.com/sbt/sbt/releases/download/v1.2.8/sbt-1.2.8.zip \
+RUN curl -L -o /root/sbt.zip https://github.com/sbt/sbt/releases/download/v1.4.9/sbt-1.4.9.zip \
  	&& unzip /root/sbt.zip -d /root \
  	&& rm /root/sbt.zip
 
@@ -148,7 +150,7 @@ ENV JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk
 ENV PATH="$JAVA_HOME/bin:${PATH}"
 
 # Install sbt user qa
-RUN curl -L -o /home/qa/sbt.zip https://github.com/sbt/sbt/releases/download/v1.2.8/sbt-1.2.8.zip \
+RUN curl -L -o /home/qa/sbt.zip https://github.com/sbt/sbt/releases/download/v1.4.9/sbt-1.4.9.zip \
 	&& unzip /home/qa/sbt.zip -d /home/qa \
 	&& rm /home/qa/sbt.zip
 
@@ -180,3 +182,7 @@ RUN aws --version
 RUN python3 --version
 RUN pip3 --version
 RUN geckodriver --version
+
+RUN mkdir -p $HOME/.ssh/ && touch $HOME/.ssh/known_hosts
+RUN ssh-keyscan github.com >> $HOME/.ssh/known_hosts
+RUN cat $HOME/.ssh/known_hosts
