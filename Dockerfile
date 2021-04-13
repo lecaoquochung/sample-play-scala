@@ -123,7 +123,7 @@ RUN java -version; \
 WORKDIR /root/qa
 
 # # Install sbt
-RUN curl -L -o /root/sbt.zip https://github.com/sbt/sbt/releases/download/v1.2.8/sbt-1.2.8.zip \
+RUN curl -L -o /root/sbt.zip https://github.com/sbt/sbt/releases/download/v1.4.9/sbt-1.4.9.zip \
  	&& unzip /root/sbt.zip -d /root \
  	&& rm /root/sbt.zip
 
@@ -207,7 +207,7 @@ ENV JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk
 ENV PATH="$JAVA_HOME/bin:${PATH}"
 
 # Install sbt user qa
-RUN curl -L -o /home/qa/sbt.zip https://github.com/sbt/sbt/releases/download/v1.2.8/sbt-1.2.8.zip \
+RUN curl -L -o /home/qa/sbt.zip https://github.com/sbt/sbt/releases/download/v1.4.9/sbt-1.4.9.zip \
 	&& unzip /home/qa/sbt.zip -d /home/qa \
 	&& rm /home/qa/sbt.zip
 
