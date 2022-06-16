@@ -1,17 +1,14 @@
-base_system: &qa_system
-  docker:
-    - image: lecaoquochung/scala:dev
-  working_directory: /home/qa/code
-
-version: 2
+version: 2.1
 
 jobs:
   build:
-    <<: *qa_system
+    working_directory: /home/qa/code
+    docker:
+      - image: lecaoquochung/scala:dev-ubuntu
     steps:
       - checkout
       - add_ssh_keys: 
-          fingerprints: 
+          fingerprints: "e0:e6:71:a6:56:06:e6:b8:cc:5b:ee:9b:13:a7:55:52"
       - restore_cache:
           key: qa-build-{{ checksum "package.json" }}
       - run:
@@ -42,10 +39,10 @@ jobs:
           path: /home/qa/target/universal/sample-play-scala-1.0-SNAPSHOT.zip
   
   test:
-    <<: *qa_system
+    working_directory: /home/qa/code
     docker:
       - image: lecaoquochung/scala:dev
-      - image: postgres:9.6.11
+      - image: postgres:13.3
         environment:
           - POSTGRES_DB=qa
           - POSTGRES_USER=qa
@@ -53,8 +50,6 @@ jobs:
           - POSTGRES_TEST_DB=test
           - POSTGRES_TEST_USER=test
           - POSTGRES_TEST_PASSWORD=testPassword
-        volumes:
-          - $PWD/docker/postgres/initdb:/docker-entrypoint-initdb.d
       - image: redis:3.2.10
     
     environment:
