@@ -56,9 +56,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # === INSTALL Node.js ===
 
-# Install node14
+# Install node16.x
 RUN apt-get update && apt-get install -y curl && \
-    curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
+    curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
     apt-get install -y nodejs
 
 # Feature-parity with node.js base images.
@@ -97,19 +97,31 @@ RUN apt install -y \
   fonts-kouzan-mouhitsu
 #   ttf-mscorefonts-installer
 
+# Install Python 3.7
+RUN apt-get update && apt-get install -y \
+    software-properties-common
+RUN add-apt-repository ppa:deadsnakes/ppa
+RUN apt-get update && apt-get install -y \
+    python3.7 \
+    python3-pip
+RUN python3.7 -m pip install pip
+RUN apt-get update && apt-get install -y \
+    python3 screen bash \
+    python3-distutils \
+    python3-setuptools
+RUN python3.7 -m pip install pip --upgrade pip
+
 # Instal java
 RUN apt-get update && apt-get install -y \
-    openjdk-8-jdk ca-certificates \
+    openjdk-11-jdk ca-certificates \
     openssh-server curl \
-    python3 screen bash \
     zip tar \
     postgresql-client sudo \
     iputils-ping \
-    python3-distutils \
     rsync \
     nginx
 
-ENV JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk
+ENV JAVA_HOME=/usr/lib/jvm/java-11.0.15-openjdk
 ENV PATH="$JAVA_HOME/bin:${PATH}"
 
 # Basic test
@@ -123,7 +135,7 @@ RUN java -version; \
 WORKDIR /root/qa
 
 # # Install sbt
-RUN curl -L -o /root/sbt.zip https://github.com/sbt/sbt/releases/download/v1.4.9/sbt-1.4.9.zip \
+RUN curl -L -o /root/sbt.zip https://github.com/sbt/sbt/releases/download/v1.5.7/sbt-1.5.7.zip \
  	&& unzip /root/sbt.zip -d /root \
  	&& rm /root/sbt.zip
 
@@ -142,16 +154,20 @@ EXPOSE 8080
 # Install mocha for API testing
 RUN npm install -g mocha
 
+########################### TEST-8 #############################
 # Install bats (needed for do-exclusively script)
 RUN git clone https://github.com/sstephenson/bats.git \
 	&& (cd bats && ./install.sh /usr/local) \
 	&& rm -rf bats
 
+# Install python version
+
 # Install AWS CLI
-RUN curl -O https://bootstrap.pypa.io/get-pip.py \
-	&& python3 get-pip.py --user \
-	&& pip3 install awscli --upgrade --user \
-	&& rm get-pip.py
+# RUN curl -O https://bootstrap.pypa.io/get-pip.py \
+# 	&& python3 get-pip.py --user \
+# 	&& pip3 install awscli --upgrade --user \
+# 	&& rm get-pip.py
+RUN pip install awscli --upgrade --user
 
 # Configure aws
 RUN aws configure set default.region ap-northeast-1
@@ -203,11 +219,11 @@ RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 USER qa
 WORKDIR /home/qa
 
-ENV JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk
+ENV JAVA_HOME=/usr/lib/jvm/java-11.0.15-openjdk
 ENV PATH="$JAVA_HOME/bin:${PATH}"
 
 # Install sbt user qa
-RUN curl -L -o /home/qa/sbt.zip https://github.com/sbt/sbt/releases/download/v1.4.9/sbt-1.4.9.zip \
+RUN curl -L -o /home/qa/sbt.zip https://github.com/sbt/sbt/releases/download/v1.5.7/sbt-1.5.7.zip \
 	&& unzip /home/qa/sbt.zip -d /home/qa \
 	&& rm /home/qa/sbt.zip
 
@@ -216,20 +232,24 @@ ENV PATH /home/qa/.local/bin:/home/qa/sbt/bin:/home/qa/bin:${PATH}
 RUN sudo ln -s /home/qa/sbt/bin/sbt /usr/local/bin/sbt
 
 # aws-cli
-RUN sudo curl -O https://bootstrap.pypa.io/get-pip.py \
-	&& python3 get-pip.py --user \
-	&& pip3 install awscli --upgrade --user \
-	&& sudo rm get-pip.py
+# RUN sudo curl -O https://bootstrap.pypa.io/get-pip.py \
+# 	&& python3 get-pip.py --user \
+# 	&& pip3 install awscli --upgrade --user \
+# 	&& sudo rm get-pip.py
+RUN pip install awscli --upgrade --user
 RUN sudo ln -s /home/qa/.local/bin/aws /usr/local/bin/aws
+
+########################### TEST-8 #############################
 
 # sbt build
 RUN whoami
 RUN env
-RUN pwd
+RUN pwd;ls -all
 RUN sbt sbtVersion
-RUN pwd;ls -all; ls -all /home/qa
 RUN yarn --version
-RUN cat /home/qa/package.json
-RUN sudo chmod 4755 /bin/ping
+RUN python --version
 RUN aws --version
 RUN sudo aws --version
+RUN ls -all /home/qa
+RUN cat /home/qa/package.json
+RUN sudo chmod 4755 /bin/ping
