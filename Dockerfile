@@ -106,7 +106,6 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 RUN mkdir -p /home/qa
 COPY package.json /home/qa
 RUN yarn install
-RUN yarn add puppeteer
 
 # Firefox geckodriver
 # https://github.com/lecaoquochung/geckodriver-alpine/blob/master/Dockerfile
@@ -166,6 +165,12 @@ RUN sudo ln -s /home/qa/.local/bin/aws /usr/local/bin/aws
 # robotframework
 COPY requirements.txt /home/qa
 RUN pip3 install -r requirements.txt
+
+# v1.0.2 - update node 16.16
+RUN sudo npm install -g n
+RUN sudo n install 16.16
+RUN hash -r
+RUN yarn add puppeteer
 
 # build
 RUN env
