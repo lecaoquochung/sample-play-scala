@@ -2,10 +2,10 @@
 # https://github.com/lecaoquochung/sample-play-scala
 # scala-build
 # image: lecaoquochung/scala:latest / branch master
-# image: lecaoquochung/scala:dev    / branch build-dev
-# image: lecaoquochung/scala:stable / branch build-stable
+# image: lecaoquochung/scala:dev    / branch dev
 
-FROM alpine:3.12
+# https://github.com/alpinelinux/docker-alpine
+FROM alpine:3.16
 
 RUN apk update && apk upgrade
 
@@ -34,9 +34,14 @@ RUN java -version; \
     yarn -v; \
     psql -V;
 
+# me-989 - npm  6.14.6 → 8.16.0 
+# npm latest version
+RUN npm install -g npm
+
 WORKDIR /root/qa
 
 # # Install sbt
+# https://github.com/sbt/sbt/releases
 RUN curl -L -o /root/sbt.zip https://github.com/sbt/sbt/releases/download/v1.2.8/sbt-1.2.8.zip \
  	&& unzip /root/sbt.zip -d /root \
  	&& rm /root/sbt.zip
@@ -85,9 +90,11 @@ RUN apk add --no-cache \
       freetype-dev \
       harfbuzz \
       ttf-freefont
-      
-RUN apk add --no-cache \
-     font-noto-gothic
+
+# me-989
+# executor failed running [/bin/sh -c apk add --no-cache      font-noto-gothic]: exit code: 1
+#   && font-noto-cjk \
+# RUN apk add --no-cache font-noto-gothic
 
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
@@ -106,7 +113,9 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 RUN mkdir -p /home/qa
 COPY package.json /home/qa
 RUN yarn install
-RUN yarn add puppeteer
+
+# me-989 - update node 16x
+# RUN yarn add puppeteer
 
 # Firefox geckodriver
 # https://github.com/lecaoquochung/geckodriver-alpine/blob/master/Dockerfile
@@ -165,13 +174,46 @@ RUN sudo ln -s /home/qa/.local/bin/aws /usr/local/bin/aws
 
 # robotframework
 COPY requirements.txt /home/qa
-RUN pip3 install -r requirements.txt
+
+# me-989 - update node 16x
+#45 23.03 Collecting h11<1,>=0.9.0
+#45 23.10   Downloading h11-0.13.0-py3-none-any.whl (58 kB)
+#45 23.12      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 58.2/58.2 kB 4.3 MB/s eta 0:00:00
+#45 23.26 Building wheels for collected packages: cffi
+#45 23.26   Building wheel for cffi (setup.py): started
+#45 24.93   Building wheel for cffi (setup.py): finished with status 'error'
+#45 24.97   error: subprocess-exited-with-error
+#45 24.97   
+#45 24.97   × python setup.py bdist_wheel did not run successfully.
+#45 24.97   │ exit code: 1
+#45 24.97   ╰─> [67 lines of output]
+#45 33.25       error: command 'gcc' failed: Permission denied
+#45 33.25       [end of output]
+#45 33.25   
+#45 33.25   note: This error originates from a subprocess, and is likely not a problem with pip.
+#45 33.26 error: legacy-install-failure
+#45 33.26 
+#45 33.26 × Encountered error while trying to install package.
+#45 33.26 ╰─> cffi
+# RUN pip3 install -r requirements.txt
+
+# node version
+# TODO
+# https://github.com/sgerrand/alpine-pkg-glibc/issues/80
+# node: /usr/lib/libstdc++.so.6: no version information available (required by node)
+RUN sudo npm install -g n
+RUN sudo n install 16.16
+RUN hash -r
+RUN yarn add puppeteer
 
 # build
 RUN env
 RUN pwd
 RUN sbt sbtVersion
-RUN pwd;ls -all 
+RUN pwd;ls -all
+
+RUN npm -v
+RUN node -v
 RUN yarn --version
 RUN cat /home/qa/package.json
 RUN sudo chmod 4755 /bin/ping

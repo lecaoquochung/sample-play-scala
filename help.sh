@@ -41,8 +41,17 @@ run_init() {
 }
 
 # run build
-build() {
-	docker-compose build
+run_build() {
+	echo "Bash version ${BASH_VERSION}..."
+	for i in {1..10}
+	do
+		printf "${i}:${!i} "
+	done
+  echo " "
+
+	# --progress=plain
+	docker-compose build \
+		${2} ${3} ${4} ${5} ${6} ${7} ${8} ${9} ${10}
 }
 
 # run start
@@ -77,6 +86,9 @@ logs() {
 # run ssh
 run_ssh() {
 	case $2 in
+		build)
+			docker-compose exec scala-build /bin/bash
+		;;
 		*)
 			docker-compose exec ${NAME} /bin/bash
 		;;
@@ -128,7 +140,8 @@ case $1 in
 	;;
 
 	build)
-		build
+		run_build \
+			${1} ${2:---progress=plain} ${3} ${4} ${5} ${6} ${7} ${8} ${9} ${10}
 	;;
 
 	start|up)
@@ -153,7 +166,7 @@ case $1 in
 
 	ssh)
 		run_ssh \
-			${1} ${2}
+			${1} ${2:-build}
 	;;
 
 	*)
