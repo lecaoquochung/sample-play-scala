@@ -17,7 +17,7 @@ services:
 
   scala:
     container_name: scala
-    image: lecaoquochung/scala:test
+    image: lecaoquochung/scala:dev-1.2.0
     working_dir: /home/qa/code
     volumes:
       - ".:/home/qa/code"

@@ -15,8 +15,7 @@ When('I open Google homepage', async function () {
 //        args:['--no-sandbox']
 //    });
     let url = 'https://google.co.jp'
-    // this.visit in world.js
-    await this.visit(url);
+    await this.page.goto(url);
 });
 Then('I can see Google homepage', async function () {
 // Write code here that turns the phrase above into concrete actions
