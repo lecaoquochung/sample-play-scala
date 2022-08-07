@@ -172,10 +172,18 @@ RUN curl -O https://bootstrap.pypa.io/get-pip.py \
 	&& rm get-pip.py
 RUN sudo ln -s /home/qa/.local/bin/aws /usr/local/bin/aws
 
+# node version
+# TODO
+# https://github.com/sgerrand/alpine-pkg-glibc/issues/80
+# node: /usr/lib/libstdc++.so.6: no version information available (required by node)
+RUN sudo npm install -g n
+RUN sudo n install 16.16
+RUN hash -r
+RUN yarn add puppeteer
+RUN yarn install
+
 # robotframework
 COPY requirements.txt /home/qa
-
-# me-989 - update node 16x
 #45 23.03 Collecting h11<1,>=0.9.0
 #45 23.10   Downloading h11-0.13.0-py3-none-any.whl (58 kB)
 #45 23.12      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 58.2/58.2 kB 4.3 MB/s eta 0:00:00
@@ -195,16 +203,7 @@ COPY requirements.txt /home/qa
 #45 33.26 
 #45 33.26 × Encountered error while trying to install package.
 #45 33.26 ╰─> cffi
-# RUN pip3 install -r requirements.txt
-
-# node version
-# TODO
-# https://github.com/sgerrand/alpine-pkg-glibc/issues/80
-# node: /usr/lib/libstdc++.so.6: no version information available (required by node)
-RUN sudo npm install -g n
-RUN sudo n install 16.16
-RUN hash -r
-RUN yarn add puppeteer
+RUN pip3 install -r requirements.txt
 
 # build
 RUN env
