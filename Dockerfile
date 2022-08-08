@@ -1,6 +1,7 @@
 # https://hub.docker.com/repository/docker/lecaoquochung/scala
 # https://github.com/lecaoquochung/sample-play-scala
 # scala-build
+# version: 1.2.0-build-002
 # image: lecaoquochung/scala:latest / branch master
 # image: lecaoquochung/scala:dev    / branch dev
 
@@ -115,7 +116,11 @@ COPY package.json /home/qa
 RUN yarn install
 
 # me-989 - update node 16x
-# RUN yarn add puppeteer
+RUN npm install -g n
+RUN n install 16.16
+RUN hash -r
+RUN yarn add puppeteer
+RUN yarn install
 
 # Firefox geckodriver
 # https://github.com/lecaoquochung/geckodriver-alpine/blob/master/Dockerfile
