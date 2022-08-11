@@ -14,10 +14,8 @@ When('I open Google homepage', async function () {
 //        executablePath: '/usr/bin/chromium-browser',
 //        args:['--no-sandbox']
 //    });
-    page = await this.browser.newPage();
-    await this.page.goto('https://google.co.jp');
-
-//    await this.page.goto('https://google.co.jp');
+    let url = 'https://google.co.jp'
+    await this.page.goto(url);
 });
 Then('I can see Google homepage', async function () {
 // Write code here that turns the phrase above into concrete actions
