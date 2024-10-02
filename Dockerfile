@@ -227,13 +227,31 @@ ENV JAVA_HOME=/usr/lib/jvm/java-11.0.15-openjdk
 ENV PATH="$JAVA_HOME/bin:${PATH}"
 
 # Install sbt user qa
-RUN curl -L -o /home/qa/sbt.zip https://github.com/sbt/sbt/releases/download/v1.5.7/sbt-1.5.7.zip \
-	&& unzip /home/qa/sbt.zip -d /home/qa \
-	&& rm /home/qa/sbt.zip
+# RUN curl -L -o /root/sbt.zip https://github.com/sbt/sbt/releases/download/v1.10.2/sbt-1.10.2.zip \
+# 	&& unzip /home/qa/sbt.zip -d /home/qa \
+# 	&& rm /home/qa/sbt.zip
 
-# Put tools like aws and sbt in the PATH
+# # Put tools like aws and sbt in the PATH
+# ENV PATH /home/qa/.local/bin:/home/qa/sbt/bin:/home/qa/bin:${PATH}
+# RUN sudo ln -s /home/qa/sbt/bin/sbt /usr/local/bin/sbt
+
+# Install required packages
+RUN apt-get update && apt-get install -y curl unzip
+
+# Install sbt for user qa
+RUN curl -L -o /home/qa/sbt.zip https://github.com/sbt/sbt/releases/download/v1.10.2/sbt-1.10.2.zip \
+    && unzip /home/qa/sbt.zip -d /home/qa \
+    && rm /home/qa/sbt.zip
+
+# Add tools like aws and sbt to the PATH
 ENV PATH /home/qa/.local/bin:/home/qa/sbt/bin:/home/qa/bin:${PATH}
-RUN sudo ln -s /home/qa/sbt/bin/sbt /usr/local/bin/sbt
+
+# Create symlink for sbt
+RUN ln -s /home/qa/sbt/bin/sbt /usr/local/bin/sbt
+
+sudo chown -R $(whoami) /tmp/.sbt
+sudo chmod -R 777 /tmp/.sbt
+# RUN export SBT_OPTS="-Dsbt.global.base=/path/to/another/tmp"
 
 # aws-cli
 # RUN sudo curl -O https://bootstrap.pypa.io/get-pip.py \
