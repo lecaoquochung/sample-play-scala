@@ -11,7 +11,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone &
     dpkg-reconfigure --frontend noninteractive tzdata
 
 # Install dependencies
-RUN apt-get update && apt-get install -y gnupg2 lsb-release ca-certificates
+RUN apt-get update && apt-get install -y gnupg2 lsb-release ca-certificates unzip
 
 # === INSTALL BROWSER DEPENDENCIES ===
 
@@ -235,9 +235,6 @@ ENV PATH="$JAVA_HOME/bin:${PATH}"
 # ENV PATH /home/qa/.local/bin:/home/qa/sbt/bin:/home/qa/bin:${PATH}
 # RUN sudo ln -s /home/qa/sbt/bin/sbt /usr/local/bin/sbt
 
-# Install required packages
-RUN apt-get update && apt-get install -y curl unzip
-
 # Install sbt for user qa
 RUN curl -L -o /home/qa/sbt.zip https://github.com/sbt/sbt/releases/download/v1.10.2/sbt-1.10.2.zip \
     && unzip /home/qa/sbt.zip -d /home/qa \
@@ -249,8 +246,8 @@ ENV PATH /home/qa/.local/bin:/home/qa/sbt/bin:/home/qa/bin:${PATH}
 # Create symlink for sbt
 RUN ln -s /home/qa/sbt/bin/sbt /usr/local/bin/sbt
 
-sudo chown -R $(whoami) /tmp/.sbt
-sudo chmod -R 777 /tmp/.sbt
+RUN sudo chown -R $(whoami) /tmp/.sbt
+RUN sudo chmod -R 777 /tmp/.sbt
 # RUN export SBT_OPTS="-Dsbt.global.base=/path/to/another/tmp"
 
 # aws-cli
