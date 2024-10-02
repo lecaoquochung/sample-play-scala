@@ -1,4 +1,3 @@
-# Ubuntu 18.04 LTS (Bionic Beaver)
 FROM ubuntu:22.04
 
 # Set environment to avoid interactive prompts
