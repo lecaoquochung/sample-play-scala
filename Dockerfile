@@ -56,10 +56,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # === INSTALL Node.js ===
 
-# Install node16.x
-RUN apt-get update && apt-get install -y curl && \
-    curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
-    apt-get install -y nodejs
+# Install node stable - 20.x
+# RUN apt-get update && apt-get install -y curl && \
+#     curl -sL https://deb.nodesource.com/setup_20.x | bash - && \
+#     apt-get install -y nodejs
+RUN apt-get update && apt-get install -y curl gnupg2 lsb-release ca-certificates
+RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | gpg --dearmor -o /usr/share/keyrings/nodesource.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/nodesource.list && \
+    apt-get update && apt-get install -y nodejs
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt-get install -f
+RUN apt-get update && apt-get install -y nodejs
 
 # Feature-parity with node.js base images.
 RUN apt-get update && apt-get install -y --no-install-recommends git ssh && \
@@ -247,7 +254,7 @@ RUN env
 RUN pwd;ls -all
 RUN sbt sbtVersion
 RUN yarn --version
-RUN python --version
+RUN python3 --version
 RUN aws --version
 RUN sudo aws --version
 RUN ls -all /home/qa
