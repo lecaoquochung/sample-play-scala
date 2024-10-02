@@ -11,7 +11,11 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone &
     dpkg-reconfigure --frontend noninteractive tzdata
 
 # Install dependencies
-RUN apt-get update && apt-get install -y gnupg2 lsb-release ca-certificates unzip
+RUN apt-get update && apt-get install -y gnupg2 \
+    lsb-release \
+    ca-certificates \
+    unzip \
+    screen
 
 # === INSTALL BROWSER DEPENDENCIES ===
 
