@@ -1,4 +1,18 @@
+# Ubuntu 18.04 LTS (Bionic Beaver)
 FROM ubuntu:22.04
+
+# Set environment to avoid interactive prompts
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Set timezone non-interactively
+ENV TZ=Asia/Tokyo
+
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
+    apt-get update && apt-get install -y apt-utils tzdata && \
+    dpkg-reconfigure --frontend noninteractive tzdata
+
+# Install dependencies
+RUN apt-get update && apt-get install -y gnupg2 lsb-release ca-certificates
 
 # === INSTALL BROWSER DEPENDENCIES ===
 
@@ -6,9 +20,7 @@ FROM ubuntu:22.04
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libwoff1 \
     libopus0 \
-    libwebp6 \
     libwebpdemux2 \
-    libenchant1c2a \
     libgudev-1.0-0 \
     libsecret-1-0 \
     libhyphen0 \
@@ -16,9 +28,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libegl1 \
     libnotify4 \
     libxslt1.1 \
-    libevent-2.1-6 \
     libgles2 \
-    libvpx5 \
     libxcomposite1 \
     libatk1.0-0 \
     libatk-bridge2.0-0 \
@@ -54,19 +64,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN apt-get update && apt-get install -y --no-install-recommends \
     xvfb
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libc6
+
 # === INSTALL Node.js ===
 
-# Install node stable - 20.x
-# RUN apt-get update && apt-get install -y curl && \
-#     curl -sL https://deb.nodesource.com/setup_20.x | bash - && \
-#     apt-get install -y nodejs
-RUN apt-get update && apt-get install -y curl gnupg2 lsb-release ca-certificates
-RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | gpg --dearmor -o /usr/share/keyrings/nodesource.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/nodesource.list && \
-    apt-get update && apt-get install -y nodejs
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-RUN apt-get install -f
-RUN apt-get update && apt-get install -y nodejs
+# Install node 20.x
+RUN apt-get update && apt-get install -y curl && \
+    curl -sL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs
 
 # Feature-parity with node.js base images.
 RUN apt-get update && apt-get install -y --no-install-recommends git ssh && \
@@ -104,23 +110,18 @@ RUN apt install -y \
   fonts-kouzan-mouhitsu
 #   ttf-mscorefonts-installer
 
-# Install Python 3.7
+# Install Python 3.10 and required packages
 RUN apt-get update && apt-get install -y \
-    software-properties-common
-RUN add-apt-repository ppa:deadsnakes/ppa
-RUN apt-get update && apt-get install -y \
-    python3.7 \
+    python3.10 \
+    python3.10-distutils \
     python3-pip
-RUN python3.7 -m pip install pip
-RUN apt-get update && apt-get install -y \
-    python3 screen bash \
-    python3-distutils \
-    python3-setuptools
-RUN python3.7 -m pip install pip --upgrade pip
+
+# Upgrade pip to the latest version
+RUN python3.10 -m pip install --upgrade pip
 
 # Instal java
 RUN apt-get update && apt-get install -y \
-    openjdk-11-jdk ca-certificates \
+    openjdk-11-jdk \
     openssh-server curl \
     zip tar \
     postgresql-client sudo \
@@ -198,20 +199,17 @@ RUN yarn install
 
 # 1. Add tip-of-tree Playwright package to install its browsers.
 #    The package should be built beforehand from tip-of-tree Playwright.
-COPY ./docker/playwright.tar.gz /tmp/playwright.tar.gz
-
-# 2. Install playwright and then delete the installation.
-#    Browsers will remain downloaded in `/home/qa/.cache/ms-playwright`.
+COPY ./scala/build/packages/playwright-1.47.2.tar.gz /tmp/playwright.tar.gz
 RUN su root -c "mkdir /tmp/qa && cd /tmp/qa && npm init -y && \
     npm i /tmp/playwright.tar.gz" && \
     rm -rf /tmp/qa && rm /tmp/playwright.tar.gz
 
-# 3. Symlink downloaded browsers for root user
-# RUN mkdir /root/.cache/ && \
-    # ln -s /home/qa/.cache/ms-playwright/ /root/.cache/ms-playwright
-RUN mkdir /home/qa/.cache/ && \
-    # cp /root/.cache/ms-playwright /home/qa/.cache/ms-playwright 
-    rsync -av --exclude=/root/.cache/ms-playwright/* /root/.cache/ms-playwright/ /home/qa/.cache/ms-playwright
+# 2. Ensure the Playwright cache exists
+RUN mkdir -p /root/.cache/ms-playwright && \
+    mkdir -p /home/qa/.cache/ms-playwright
+
+# 3. Sync the Playwright cache
+RUN rsync -av --exclude=/root/.cache/ms-playwright/* /root/.cache/ms-playwright/ /home/qa/.cache/ms-playwright || true
 
 # Add user so we don't need --no-sandbox.
 RUN groupadd -r qa && useradd -r -g qa -G audio,video qa \
