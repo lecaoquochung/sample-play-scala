@@ -142,7 +142,7 @@ RUN java -version; \
 WORKDIR /root/qa
 
 # # Install sbt
-RUN curl -L -o /root/sbt.zip https://github.com/sbt/sbt/releases/download/v1.5.7/sbt-1.5.7.zip \
+RUN curl -L -o /root/sbt.zip https://github.com/sbt/sbt/releases/download/v1.10.2/sbt-1.10.2.zip \
  	&& unzip /root/sbt.zip -d /root \
  	&& rm /root/sbt.zip
 
@@ -198,7 +198,7 @@ RUN yarn install
 
 # 1. Add tip-of-tree Playwright package to install its browsers.
 #    The package should be built beforehand from tip-of-tree Playwright.
-COPY ./scala/build/packages/playwright-1.47.2.tar.gz /tmp/playwright.tar.gz
+COPY ./docker/build/packages/playwright-1.47.2.tar.gz /tmp/playwright.tar.gz
 RUN su root -c "mkdir /tmp/qa && cd /tmp/qa && npm init -y && \
     npm i /tmp/playwright.tar.gz" && \
     rm -rf /tmp/qa && rm /tmp/playwright.tar.gz
