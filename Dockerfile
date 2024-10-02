@@ -243,20 +243,24 @@ RUN curl -L -o /home/qa/sbt.zip https://github.com/sbt/sbt/releases/download/v1.
 # Add tools like aws and sbt to the PATH
 ENV PATH /home/qa/.local/bin:/home/qa/sbt/bin:/home/qa/bin:${PATH}
 
-# Create symlink for sbt
-RUN ln -s /home/qa/sbt/bin/sbt /usr/local/bin/sbt
-
-RUN sudo chown -R $(whoami) /tmp/.sbt
-RUN sudo chmod -R 777 /tmp/.sbt
-# RUN export SBT_OPTS="-Dsbt.global.base=/path/to/another/tmp"
-
 # aws-cli
-# RUN sudo curl -O https://bootstrap.pypa.io/get-pip.py \
-# 	&& python3 get-pip.py --user \
-# 	&& pip3 install awscli --upgrade --user \
-# 	&& sudo rm get-pip.py
-RUN pip install awscli --upgrade --user
-RUN sudo ln -s /home/qa/.local/bin/aws /usr/local/bin/aws
+# Install pipx and set up PATH
+RUN apt-get update && apt-get install -y pipx && pipx ensurepath
+# Install awscli using pipx
+RUN pipx install awscli
+# Create symlink for aws CLI
+RUN ln -s /home/qa/.local/bin/aws /usr/local/bin/aws
+
+# Create symlink for sbt
+USER root
+# Ensure /usr/local/bin is writable
+# RUN chmod ugo+w /usr/local/bin && ln -s /home/qa/sbt/bin/sbt /usr/local/bin/sbt
+RUN ln -s /home/qa/sbt/bin/sbt /usr/local/bin/sbt
+RUN chown -R $(whoami) /tmp/.sbt
+RUN chmod -R 777 /tmp/.sbt
+
+USER qa
+# RUN export SBT_OPTS="-Dsbt.global.base=/path/to/another/tmp"
 
 ########################### TEST-8 #############################
 
