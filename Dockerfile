@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 # Set environment to avoid interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
@@ -43,10 +43,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gstreamer1.0-libav
 
 # Install Chromium dependencies
+# outdate in ubuntu 24.04
+# 1.601 E: Package 'libasound2' has no installation candidate
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libnss3 \
     libxss1 \
-    libasound2 \
     fonts-noto-color-emoji \
     libxtst6
 
@@ -109,14 +110,24 @@ RUN apt install -y \
   fonts-kouzan-mouhitsu
 #   ttf-mscorefonts-installer
 
-# Install Python 3.10 and required packages
-RUN apt-get update && apt-get install -y \
+# Install Python and required packages
+# Optional: If you need venv for virtual environments
+RUN apt-get update && apt-get install -y software-properties-common && \
+    add-apt-repository ppa:deadsnakes/ppa && \
+    apt-get update && apt-get install -y \
     python3.10 \
-    python3.10-distutils \
-    python3-pip
+    python3-pip \
+    python3-venv # Use this for virtual environment support
+
+# Clean up
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Optionally verify installation
+RUN python3.10 --version && pip3 --version
 
 # Upgrade pip to the latest version
-RUN python3.10 -m pip install --upgrade pip
+# Found existing installation: pip 24.0
+# RUN python3.10 -m pip install --upgrade pip
 
 # Instal java
 RUN apt-get update && apt-get install -y \
@@ -170,11 +181,12 @@ RUN git clone https://github.com/sstephenson/bats.git \
 # Install python version
 
 # Install AWS CLI
-# RUN curl -O https://bootstrap.pypa.io/get-pip.py \
-# 	&& python3 get-pip.py --user \
-# 	&& pip3 install awscli --upgrade --user \
-# 	&& rm get-pip.py
-RUN pip install awscli --upgrade --user
+# Install pipx and set up PATH
+RUN apt-get update && apt-get install -y pipx && pipx ensurepath
+# Install awscli using pipx
+RUN pipx install awscli
+# Create symlink for aws CLI
+RUN ln -s /home/qa/.local/bin/aws /usr/local/bin/aws
 
 # Configure aws
 RUN aws configure set default.region ap-northeast-1
@@ -199,6 +211,7 @@ RUN yarn install
 # 1. Add tip-of-tree Playwright package to install its browsers.
 #    The package should be built beforehand from tip-of-tree Playwright.
 COPY ./docker/build/packages/playwright-1.47.2.tar.gz /tmp/playwright.tar.gz
+# COPY ./scala/build/packages/playwright-1.47.2.tar.gz /tmp/playwright.tar.gz
 RUN su root -c "mkdir /tmp/qa && cd /tmp/qa && npm init -y && \
     npm i /tmp/playwright.tar.gz" && \
     rm -rf /tmp/qa && rm /tmp/playwright.tar.gz
@@ -227,29 +240,17 @@ ENV JAVA_HOME=/usr/lib/jvm/java-11.0.15-openjdk
 ENV PATH="$JAVA_HOME/bin:${PATH}"
 
 # Install sbt user qa
-# RUN curl -L -o /root/sbt.zip https://github.com/sbt/sbt/releases/download/v1.10.2/sbt-1.10.2.zip \
-# 	&& unzip /home/qa/sbt.zip -d /home/qa \
-# 	&& rm /home/qa/sbt.zip
-
-# # Put tools like aws and sbt in the PATH
-# ENV PATH /home/qa/.local/bin:/home/qa/sbt/bin:/home/qa/bin:${PATH}
-# RUN sudo ln -s /home/qa/sbt/bin/sbt /usr/local/bin/sbt
-
-# Install sbt for user qa
 RUN curl -L -o /home/qa/sbt.zip https://github.com/sbt/sbt/releases/download/v1.10.2/sbt-1.10.2.zip \
-    && unzip /home/qa/sbt.zip -d /home/qa \
-    && rm /home/qa/sbt.zip
+  && unzip /home/qa/sbt.zip -d /home/qa \
+  && rm /home/qa/sbt.zip
 
 # Add tools like aws and sbt to the PATH
 ENV PATH /home/qa/.local/bin:/home/qa/sbt/bin:/home/qa/bin:${PATH}
 
 # aws-cli
-# Install pipx and set up PATH
-RUN apt-get update && apt-get install -y pipx && pipx ensurepath
 # Install awscli using pipx
 RUN pipx install awscli
-# Create symlink for aws CLI
-RUN ln -s /home/qa/.local/bin/aws /usr/local/bin/aws
+# RUN ln -s /home/qa/.local/bin/aws /usr/local/bin/aws
 
 # Create symlink for sbt
 USER root
@@ -258,6 +259,7 @@ USER root
 RUN ln -s /home/qa/sbt/bin/sbt /usr/local/bin/sbt
 RUN chown -R $(whoami) /tmp/.sbt
 RUN chmod -R 777 /tmp/.sbt
+ENV PATH="/home/qa/.local/bin:${PATH}"
 
 USER qa
 # RUN export SBT_OPTS="-Dsbt.global.base=/path/to/another/tmp"
@@ -272,7 +274,6 @@ RUN sbt sbtVersion
 RUN yarn --version
 RUN python3 --version
 RUN aws --version
-RUN sudo aws --version
 RUN ls -all /home/qa
 RUN cat /home/qa/package.json
 RUN sudo chmod 4755 /bin/ping
